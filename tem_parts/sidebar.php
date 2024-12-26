@@ -19,5 +19,5 @@
     </div>
     <a href="<?php echo BASE_URL?>pages/students.php"><i class="bi bi-people icon"></i> Students</a>
     <a href="<?php echo BASE_URL?>pages/teachers.php"><i class="bi bi-person-badge icon"></i> Teachers</a>
-    <!-- <a href="<?php #echo BASE_URL?>pages/logout.php"><i class="bi bi-box-arrow-right icon"></i> Logout</a> -->
+    <a href="<?php echo BASE_URL?>"><i class="bi bi-box-arrow-right icon"></i> Logout</a>
   </div>

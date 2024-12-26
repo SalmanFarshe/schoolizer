@@ -7,6 +7,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>School Admin Dashboard</title>
   <?php require_once("../tem_parts/link.php"); ?>
+  <style>
+    .upload-section {
+      border: 2px dashed #6c757d;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      margin-top: 20px;
+    }
+    .upload-section h5 {
+      margin-bottom: 15px;
+    }
+  </style>
 </head>
 <body>
     <?php require_once("../tem_parts/sidebar.php"); ?>
@@ -57,6 +69,50 @@
                   ?>
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="upload-section text-center">
+              <h5>Upload CSV File</h5>
+              <p class="text-muted">Only CSV files are allowed. Uploaded files will be stored in the <strong>results</strong> folder.</p>
+              <?php
+                // File upload handling
+                $uploadMessage = "";
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csvFile'])) {
+                    $uploadDir = "../backend/results/"; // Ensure this folder exists
+                    $fileTmpPath = $_FILES['csvFile']['tmp_name'];
+                    $fileName = $_FILES['csvFile']['name'];
+                    $fileNameCmps = pathinfo($fileName);
+                    $fileExtension = strtolower($fileNameCmps['extension']);
+
+                    // Validate file type
+                    if ($fileExtension === 'csv') {
+                        $newFileName = uniqid() . '.' . $fileExtension;
+                        $destPath = $uploadDir . $newFileName;
+
+                        if (move_uploaded_file($fileTmpPath, $destPath)) {
+                            $uploadMessage = "<p class='text-success'>File uploaded successfully: $newFileName</p>";
+                        } else {
+                            $uploadMessage = "<p class='text-danger'>Error moving the uploaded file.</p>";
+                        }
+                    } else {
+                        $uploadMessage = "<p class='text-danger'>Invalid file type. Only CSV files are allowed.</p>";
+                    }
+                }
+              ?>
+              <?php if (!empty($uploadMessage)): ?>
+                <div class="mb-3"><?php echo $uploadMessage; ?></div>
+              <?php endif; ?>
+              <form method="POST" enctype="multipart/form-data" class="d-flex flex-column align-items-center">
+                <div class="mb-3">
+                  <input type="file" name="csvFile" id="csvFile" class="form-control" accept=".csv" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Upload File</button>
+              </form>
             </div>
           </div>
         </div>
