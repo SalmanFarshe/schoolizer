@@ -71,6 +71,27 @@
               </div>
             </div>
           </div>
+          <!-- Total Teachers -->
+          <div class="col-md-3 mb-3">
+            <div class="card">
+              <div class="card-body text-center">
+                <h5 class="card-title">Total Teachers</h5>
+                <p class="card-text">
+                  <?php
+                    // Fetch total number of unique classes
+                    $query_total_classes = "SELECT COUNT(DISTINCT class) AS total_classes FROM students";
+                    $result_total_classes = mysqli_query($connection, $query_total_classes);
+                    if ($result_total_classes) {
+                      $total_classes = mysqli_fetch_assoc($result_total_classes)['total_classes'];
+                      echo $total_classes;
+                    } else {
+                      echo "Error fetching data";
+                    }
+                  ?>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- File Upload Section -->
@@ -78,7 +99,7 @@
           <div class="col-md-12">
             <div class="upload-section text-center">
               <h5>Upload CSV File</h5>
-              <p class="text-muted">Only CSV files are allowed. Uploaded files will be stored in the <strong>results</strong> folder.</p>
+              <p class="text-muted">Only CSV files are allowed.</p>
               <?php
                 // File upload handling
                 $uploadMessage = "";
