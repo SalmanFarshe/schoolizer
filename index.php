@@ -11,7 +11,7 @@
       $password = $_POST['password'];
 
       // Verify the password
-      if ($password === "decent35") {
+      if ($password === "1111") {
           header("Location: ./pages/dashboard.php");
           exit;
       } else {

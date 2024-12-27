@@ -28,7 +28,8 @@
   SELECT s.subject_name, m.cq_marks, m.mcq_marks, m.total_marks
   FROM marks m
   JOIN subjects s ON m.subject_id = s.subject_id
-  WHERE m.student_id = '$student_id'";
+  WHERE m.student_id = '$student_id'
+  GROUP BY m.subject_id ASC";
   $result_marks = mysqli_query($connection, $query_marks);
 
   // Function to calculate grade and GPA
@@ -49,6 +50,20 @@
           return ['F', 0];
       }
   }
+
+  // Calculate CGPA
+  $total_gpa = 0;
+  $subject_count = 0;
+  while ($row = mysqli_fetch_assoc($result_marks)) {
+      // Calculate GPA and Grade for each subject
+      list($grade, $gpa) = get_grade_and_gpa($row['total_marks']);
+      $total_gpa += $gpa;
+      $subject_count++;
+  }
+
+  // Calculate final CGPA (average GPA from all subjects)
+  $cgpa = $subject_count > 0 ? $total_gpa / $subject_count : 0;
+  $cgpa = number_format($cgpa, 2);  // Ensure CGPA is rounded to 2 decimal places
 ?>
 
 <!DOCTYPE html>
@@ -79,7 +94,6 @@
             <p>Narshinghapur, Ashulia, Savar, Dhaka-1341</p>
           </div>
           <div class="col-md-3">
-            <!-- Grade Chart -->
             <div class="grade-chart">
               <table class="table table-striped text-center">
                 <thead>
@@ -102,36 +116,31 @@
           </div>
         </div>  
       </div>  
-      <!-- Student Details -->
+
       <h3 class="text-decoration-underline text-center mb-2">PROGRESS REPORT</h3>
       <div class="row mb-4 student-details">
         <div class="col-md-6">
-          <p><strong>Student's Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> <?php echo $student_name; ?></p>
-          <p><strong>Father's Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> <?php echo $father_name; ?></p>
-          <p><strong>Mother's Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> <?php echo $mother_name; ?></p>
+          <p><strong>Student's Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> <?php echo ucfirst($student_name); ?></p>
+          <p><strong>Father's Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> <?php echo ucfirst($father_name); ?></p>
+          <p><strong>Mother's Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> <?php echo ucfirst($mother_name); ?></p>
           <p><strong>Student's ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> <?php echo $student_id; ?></p>
           <p><strong>Examination&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> Annual</p>
         </div>
         <div class="col-md-6">
-          <p><strong>Class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> <?php echo $class; ?></p>
-          <p><strong>Group&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> </p>
+          <p><strong>Class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> <?php echo ucfirst($class);?></p>
           <p><strong>Roll&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> <?php echo $roll; ?></p>
           <p><strong>Exam Held&nbsp;&nbsp;&nbsp;:</strong> Dec-24</p>
           <p><strong>Year&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</strong> 2024</p>
         </div>
       </div>
 
-      <!-- Subject Marks Table -->
       <table class="table table-striped text-center">
         <thead>
           <tr>
             <th>Subject</th>
             <th>Full Marks</th>
-            <!-- <th>Highest Marks</th> -->
-            <!-- <th>CA</th> -->
             <th>CQ</th>
             <th>MCQ</th>
-            <!-- <th>AS</th> -->
             <th>Total Marks</th>
             <th>Grade Point</th>
             <th>Letter Grade</th>
@@ -139,16 +148,16 @@
         </thead>
         <tbody>
         <?php
+        // Reset result_marks query to start over for GPA calculation
+        $result_marks = mysqli_query($connection, $query_marks);
         while ($row = mysqli_fetch_assoc($result_marks)) {
+            // Calculate GPA and Grade for each subject
             list($grade, $gpa) = get_grade_and_gpa($row['total_marks']);
             echo "<tr>
                     <td>{$row['subject_name']}</td>
                     <td>100</td>
-                    <!-- <td>98.60</td> -->
-                    <!-- <td>30</td> -->
                     <td>{$row['cq_marks']}</td>
                     <td>{$row['mcq_marks']}</td>
-                    <!-- <td>-</td> -->
                     <td>{$row['total_marks']}</td>
                     <td>{$gpa}</td>
                     <td>{$grade}</td>
@@ -158,7 +167,6 @@
         </tbody>
       </table>
 
-      <!-- Result Summary -->
       <div class="result-card-bottom">
         <div class="row">
           <div class="col-md-9">
@@ -171,8 +179,26 @@
               </thead>
               <tbody>
                 <tr>
-                  <td><?php echo $gpa; ?></td>
-                  <td><?php echo $grade; ?></td>
+                  <td><?php echo $cgpa; ?></td>
+                  <td>
+                    <?php
+                      if ($cgpa == 5.00) {
+                        echo "A+";
+                      } elseif ($cgpa >= 4.00) {
+                        echo "A";
+                      } elseif ($cgpa >= 3.50) {
+                        echo "A-";
+                      } elseif ($cgpa >= 3.00) {
+                        echo "B";
+                      } elseif ($cgpa >= 2.00) {
+                        echo "C";
+                      } elseif ($cgpa >= 1.00) {
+                        echo "D";
+                      } else {
+                        echo "F";
+                      }
+                    ?>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -181,14 +207,13 @@
                 <tr>
                   <th class="remarks h3">
                     <?php
-                      // Display remarks based on GPA
-                      if ($gpa == 5) {
+                      if ($cgpa == 5.00) {
                         echo "Excellent";
-                      } elseif ($gpa >= 4) {
+                      } elseif ($cgpa >= 4.00) {
                         echo "Very Good";
-                      } elseif ($gpa >= 3) {
+                      } elseif ($cgpa >= 3.00) {
                         echo "Good";
-                      } elseif ($gpa >= 2) {
+                      } elseif ($cgpa >= 2.00) {
                         echo "Satisfactory";
                       } else {
                         echo "Needs Improvement";
@@ -199,42 +224,37 @@
               </thead>
             </table>
           </div>
-
-          <!-- QR code -->
-          <?php
-            include("backend/phpqrcode/qrlib.php");
-            // Dynamic student data for QR code generation
-            $student_data = "Name: {$student_name}\nStudent ID: {$student_id}\nClass: {$class}\nRoll: {$roll}\nResult: {$grade}\nGPA: {$gpa}";
-            // Generate QR code
-            $qr_code_file = 'assets/qrcodes/student_result_qr.png';
-            QRcode::png($student_data, $qr_code_file);
-          ?>
-        <div class="col-md-3">
-          <img src="<?php echo $qr_code_file ?>" alt="Student Result QR Code" class="qr-img">
+          <div class="col-md-3">
+            <?php
+              include("backend/phpqrcode/qrlib.php");
+              $student_data = "Name: {$student_name}\nStudent ID: {$student_id}\nClass: {$class}\nRoll: {$roll}\nResult: {$cgpa}\nGrade: {$grade}";
+              $qr_code_file = 'assets/qrcodes/student_result_qr.png';
+              QRcode::png($student_data, $qr_code_file);
+            ?>
+            <img src="<?php echo $qr_code_file ?>" alt="Student Result QR Code" class="qr-img">
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Signatures -->
-    <div class="signature-section">
-      <div class="signature-box">
-        <p>_______________________</p>
-        <p>Guardian</p>
+      <div class="signature-section">
+        <div class="signature-box">
+          <p>_______________________</p>
+          <p>Guardian</p>
+        </div>
+        <div class="signature-box">
+          <p>_______________________</p>
+          <p>Class Teacher</p>
+        </div>
+        <div class="signature-box">
+          <p>_______________________</p>
+          <p>Principal</p>
+        </div>
       </div>
-      <div class="signature-box">
-        <p>_______________________</p>
-        <p>Class Teacher</p>
-      </div>
-      <div class="signature-box">
-        <p>_______________________</p>
-        <p>Principal</p>
-      </div>
-    </div>
 
-    <!-- Buttons (hidden during print) -->
-    <div class="mt-4 text-center no-print">
-      <button onclick="printPage()" class="btn btn-secondary">Print</button>
-      <a href="<?php echo BASE_URL?>pages/dashboard.php" class="btn btn-primary">Return to Dashboard</a>
+      <div class="mt-4 text-center no-print">
+        <button onclick="printPage()" class="btn btn-secondary">Print</button>
+        <a href="<?php echo BASE_URL?>pages/dashboard.php" class="btn btn-primary">Return to Dashboard</a>
+      </div>
     </div>
   </div>
 </body>
