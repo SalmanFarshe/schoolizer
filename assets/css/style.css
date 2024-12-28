@@ -8,6 +8,7 @@ body {
     color: var(--text-color);
     position: fixed;
     width: 200px;
+    overflow-y: scroll !important;
 }
 .sidebar .logo{
     text-align: center !important;
@@ -24,6 +25,9 @@ body {
 .sidebar .logo .logo_img{
     width: 100px !important;
     height: 100px !important;
+}
+.class-name{
+    padding: 5px 20px !important;
 }
 .sidebar a {
     color: var(--text-color);
