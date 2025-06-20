@@ -1,0 +1,84 @@
+@import url(colors.css);
+body {
+    background-color: var(--main-bg);
+}
+/* Custom Scrollbar for Sidebar */
+.sidebar {
+    scrollbar-width: thin; 
+    scrollbar-color: var(--sidebar-collapse-bg) var(--sidebar-collapse-bg) 
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #1abc9c; 
+    border-radius: 4px; 
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: #16a085;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background-color: #2c3e50;
+}
+.sidebar {
+    height: 100vh;
+    background-color: var(--sidebar-bg);
+    color: var(--text-color);
+    position: fixed;
+    width: 200px;
+    overflow-y: scroll !important;
+}
+.sidebar .logo{
+    text-align: center !important;
+    width: 100%;
+    padding-left: 0 !important;
+}
+.sidebar .school_name{
+    text-align: center !important;
+    font-size: 20px;
+}
+.sidebar .logo:hover{
+    background-color: transparent;
+}
+.sidebar .logo .logo_img{
+    width: 100px !important;
+    height: 100px !important;
+}
+.class-name{
+    padding: 5px 20px !important;
+}
+.sidebar a {
+    color: var(--text-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+}
+.sidebar a:hover {
+    background-color: var(--sidebar-hover-bg);
+}
+.sidebar .collapse {
+    background-color: var(--sidebar-collapse-bg);
+}
+.sidebar .collapse.show {
+    height: auto;
+    visibility: visible; /* Make it visible when expanded */
+}
+.sidebar .collapse a {
+    padding-left: 40px;
+    transition:padding-left 0.3s ease;
+}
+.sidebar .collapse a:hover {
+    background-color: var(--sidebar-collapse-hover-bg);
+}
+.main-content {
+    margin-left: 200px;
+    padding: 20px;
+}
+.icon {
+    margin-right: var(--icon-margin);
+}
