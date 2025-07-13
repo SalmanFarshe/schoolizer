@@ -50,16 +50,4 @@ Schoolizer is a web-based School Management System designed to simplify and digi
 
 ---
 
-### 🤝 **Contributing**
-
-Contributions are welcome! If you’d like to collaborate, feel free to fork the repo and submit a pull request.
-
----
-
-### ⚖️ **License**
-
-[MIT License](LICENSE)
-
----
-
 #### ⭐ **Schoolizer aims to bring digital transformation to schools, making management smoother, faster, and more reliable.**
