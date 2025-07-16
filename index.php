@@ -32,12 +32,20 @@
 </head>
 <body>
   <div class="login-container">
-    <h3 class="text-center mb-4">School Admin Login</h3>
+    <h3 class="text-center mb-4">Account Login</h3>
     <?php if ($error): ?>
       <div class="alert alert-danger"><?php echo $error; ?></div>
     <?php endif; ?>
     <form method="POST" action="">
       <div class="mb-3">
+        <label for="userrole" class="form-label">Select Role</label>
+        <select name="userrole" id="userrole" class="form-control" required>
+          <option value="">Select your role</option>
+          <option value="admin">Admin</option>
+          <option value="teacher">Teacher</option>
+          <option value="student">Student</option>
+        </select>
+
         <label for="password" class="form-label">Password</label>
         <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
       </div>

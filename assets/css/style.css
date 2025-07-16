@@ -1,11 +1,13 @@
-@import url(colors.css);
+@import url(root.css);
 body {
     background-color: var(--main-bg);
+    font-family: var(--font-family);
 }
 /* Custom Scrollbar for Sidebar */
 .sidebar {
     scrollbar-width: thin; 
-    scrollbar-color: var(--sidebar-collapse-bg) var(--sidebar-collapse-bg) 
+    scrollbar-color: var(--sidebar-collapse-bg);
+    box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar::-webkit-scrollbar {

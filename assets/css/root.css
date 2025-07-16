@@ -1,0 +1,11 @@
+:root {
+    --sidebar-bg: #F8F8F7;
+    --sidebar-hover-bg: #F0F0EF;
+    --sidebar-collapse-bg: #F8F8F7;
+    --sidebar-collapse-hover-bg: #F0F0EF;
+    --main-bg: #FFFFFF;
+    --text-color: #878683;
+    --icon-margin: 10px;
+    --click-bg: #D2D2D1;
+    --font-family: 'Pacifico', cursive;
+}
