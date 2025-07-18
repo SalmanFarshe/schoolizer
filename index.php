@@ -51,7 +51,8 @@
       </div>
       <button type="submit" class="btn btn-primary w-100">Login</button>
     </form>
+    <p class="text-center pt-2">Don't Have account? <a href="pages/root/create-account.php">Create Account</a></p>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

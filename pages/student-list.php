@@ -4,13 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>School Admin Dashboard</title>
+  <title></title>
   <?php require_once("../tem_parts/link.php")?>
 </head>
 <body>
     <?php
         require_once("../tem_parts/sidebar.php");
-        require_once("../backend/config/config.php");  // Ensure you include the database connection
+        require_once("../backend/config/config.php");
     ?>
 <!-- Main Content -->
   <div class="main-content text-center">
@@ -98,6 +98,6 @@
       </table>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

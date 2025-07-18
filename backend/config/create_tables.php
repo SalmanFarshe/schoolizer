@@ -23,6 +23,17 @@
         roll INT NOT NULL
     );";
     executeQuery($connection, $sql_students, "students");
+    
+    $users = "
+    CREATE TABLE IF NOT EXISTS users (
+        user_id VARCHAR(20) PRIMARY KEY,
+        user_name VARCHAR(100) NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        role ENUM('admin', 'teacher', 'student') NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );";
+    executeQuery($connection, $users, "users");
 
     // SQL to create `subjects` table
     $sql_subjects = "

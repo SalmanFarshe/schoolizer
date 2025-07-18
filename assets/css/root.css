@@ -4,8 +4,8 @@
     --sidebar-collapse-bg: #F8F8F7;
     --sidebar-collapse-hover-bg: #F0F0EF;
     --main-bg: #FFFFFF;
-    --text-color: #878683;
+    --text-color: black;
     --icon-margin: 10px;
     --click-bg: #D2D2D1;
-    --font-family: 'Pacifico', cursive;
+    --font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
