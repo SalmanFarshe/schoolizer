@@ -9,15 +9,15 @@ jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Deploy via FTP to cPanel
-        uses: SamKirkland/FTP-Deploy-Action@3.1.1
+        uses: SamKirkland/FTP-Deploy-Action@4.3.4
         with:
-          ftp-server: ${{ secrets.FTP_SCHOOLIZER_SERVER }}
-          ftp-username: ${{ secrets.FTP_SCHOOLIZER_USER }}
-          ftp-password: ${{ secrets.FTP_SCHOOLIZER_PASS }}
+          server: ${{ secrets.FTP_SCHOOLIZER_SERVER }}
+          username: ${{ secrets.FTP_SCHOOLIZER_USER }}
+          password: ${{ secrets.FTP_SCHOOLIZER_PASS }}
           local-dir: ./
-          git-ftp-args: --remote-root public_html/schoolizer --force
+          server-dir: public_html/schoolizer
