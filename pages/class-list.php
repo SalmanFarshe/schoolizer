@@ -14,7 +14,7 @@
     ?>
   <!-- Main Content -->
   <div class="main-content text-center">
-    <h1>Class List</h1>
+    <h1>Class List </h1>
   </div>
   <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
