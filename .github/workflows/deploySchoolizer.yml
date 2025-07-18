@@ -20,4 +20,4 @@ jobs:
           username: ${{ secrets.FTP_SCHOOLIZER_USER }}
           password: ${{ secrets.FTP_SCHOOLIZER_PASS }}
           local-dir: ./
-          server-dir: public_html/schoolizer/
+          server-dir: ./
