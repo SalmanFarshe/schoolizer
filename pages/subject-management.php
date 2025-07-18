@@ -13,7 +13,7 @@
         require_once("../backend/config/config.php");
     ?>
   <!-- Main Content -->
-  <div class="main-content text-center">
+  <div class="main-content">
     <h1>Subject Management</h1>
   </div>
   <script src="../assets/js/bootstrap.bundle.min.js"></script>
