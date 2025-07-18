@@ -1,8 +1,8 @@
 <?php
     $server_name = 'localhost';
-    $dbusername = 'root';
-    $dbpassword = '';
-    $dbname = 'schoolizerdb';
+    $dbusername = 'salmanfarshe_schoolizer';
+    $dbpassword = 'schoolizer@2025';
+    $dbname = 'salmanfarshe_schoolizer';
 
     global $connection;
     $connection = mysqli_connect($server_name, $dbusername, $dbpassword);
