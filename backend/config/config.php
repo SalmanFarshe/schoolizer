@@ -2,7 +2,7 @@
     $server_name = 'localhost';
     $dbusername = 'root';
     $dbpassword = '';
-    $dbname = 'schoolizerdb';
+    $dbname = 'salmanfarshe_schoolizer';
 
     global $connection;
     $connection = mysqli_connect($server_name, $dbusername, $dbpassword);
