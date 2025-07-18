@@ -1,23 +1,29 @@
-name: Deploy to CPanel
+name: Publish Website to CPanel
 
 on:
   push:
     branches:
-      - prod
+      - prod   # Deploys only when you push/merge to prod branch
 
 jobs:
-  deploy:
+  ftp-deploy:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Checkout full git repo (important for git-ftp)
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 0   # Fetch full history, not shallow clone
 
-      - name: Deploy via FTP
+      # Optional: Debug to verify .git folder exists
+      - name: Verify .git folder exists
+        run: ls -la .git
+
+      # Step 2: Deploy using SamKirkland FTP-Deploy-Action
+      - name: Deploy via FTP to cPanel
         uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:
           ftp-server: ${{ secrets.FTP_SCHOOLIZER_SERVER }}
           ftp-username: ${{ secrets.FTP_SCHOOLIZER_USER }}
           ftp-password: ${{ secrets.FTP_SCHOOLIZER_PASS }}
-          local-dir: ./
-          server-dir: public_html/schoolizer/
+          local-dir: ./              # Your local project folder, change if needed
+          git-ftp-args: --remote-root public_html/schoolizer  # Upload to this folder on server
