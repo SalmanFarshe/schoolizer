@@ -1,7 +1,7 @@
 <?php
     $server_name = 'localhost';
-    $dbusername = 'root';
-    $dbpassword = '';
+    $dbusername = 'salmanfarshe_schoolizer';
+    $dbpassword = 'schoolizer@2025';
     $dbname = 'salmanfarshe_schoolizer';
 
     global $connection;
