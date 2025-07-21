@@ -9,7 +9,7 @@
   ?>
 </head>
 <body>
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
+<div class="container bg-dark d-flex justify-content-center align-items-center min-vh-100">
   <div class="card shadow-lg p-4" style="max-width: 450px; width: 100%; border-radius: 1rem;">
     <div class="text-center mb-4">
       <h2 class="fw-bold text-primary">School<span class="text-danger">izer</span></h2>
@@ -38,6 +38,9 @@
     </form>
   </div>
 </div>
+<?php
+    include("../../tem_parts/link-js.php");
+?>
 </body>
 </html>
  
