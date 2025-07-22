@@ -26,7 +26,7 @@
           <img src="assets/images/logo/schoolizer-logo.png" alt="Schoolizer Logo" class="sign-up-logo img-fluid mb-3" style="width: 100px;">
           <p class="text-white">Login to your account</p>
         </div>
-        <form method="POST" action="">
+        <form method="POST" action="pages/dashboard.php">
           <div class="row">
             <div class="col-md-12 mb-3">
               <label for="userrole" class="form-label text-white">Role</label>

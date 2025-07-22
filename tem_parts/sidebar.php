@@ -2,7 +2,7 @@
 <div class="sidebar">
     <div class="text-center">
       <a href="<?php echo BASE_URL?>pages/dashboard.php" class="logo">
-        <img class="m-auto logo_img" src="<?php echo BASE_URL?>assets/img/logo/logo-black.png" alt="School Logo" class="img-fluid rounded-circle">
+        <img class="m-auto logo_img" src="<?php echo BASE_URL?>assets/images/logo/schoolizer-logo.png" alt="School Logo" class="img-fluid rounded-circle">
       </a>    
       <!-- <h1 class="school_name">Decent International School</h1> -->
     </div>
