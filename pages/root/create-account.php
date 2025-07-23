@@ -62,7 +62,7 @@
           <div class="d-grid mb-3">
             <button type="submit" class="btn btn-primary">Sign Up</button>
           </div>
-          <p class="text-center small">
+          <p class="text-center small text-info">
             Already have an account?
             <a href="../../index.php" class="text-decoration-none">Login here</a>
           </p>
