@@ -7,44 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>School Admin Dashboard</title>
   <?php require_once("../tem_parts/link.php"); ?>
-  <style>
-    .upload-section {
-      border: 2px dashed #6c757d;
-      padding: 20px;
-      border-radius: 8px;
-      background-color: #f8f9fa;
-      margin-top: 20px;
-    }
-    .setting-section{
-      border: 2px dashed #6c757d;
-      padding: 20px;
-      border-radius: 8px;
-      background-color: #f8f9fa;
-      margin-top: 20px;
-    }
-    .upload-section h5 {
-      margin-bottom: 15px;
-    }
-    .action-btn {
-      margin-top: 20px;
-    }
-    .warning-msg {
-      color: #d9534f;
-      font-weight: bold;
-    }
-    .success-msg {
-      color: #28a745;
-      font-weight: bold;
-    }
-    .card{
-      border: 1px solid #6c757d;
-      border-radius: 8px;
-      background-color: #f8f9fa;
-    }
-    .bxsdw{
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-  </style>
 </head>
 <body>
     <?php require_once("../tem_parts/sidebar.php"); ?>
