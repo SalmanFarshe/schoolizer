@@ -42,8 +42,9 @@
     background-color: transparent;
 }
 .sidebar .logo .logo_img{
-    width: 100px !important;
-    height: 100px !important;
+    width: auto !important;
+    height: 70px !important;
+    margin: 25px 0 !important;
 }
 .sidebar a {
     color: var(--text-color);
