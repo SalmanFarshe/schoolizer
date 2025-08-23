@@ -1,74 +1,78 @@
-/* Custom Scrollbar for Sidebar */
+/* Sidebar Styling */
 .sidebar {
-    scrollbar-width: thin; 
-    scrollbar-color: var(--sidebar-collapse-bg);
-    box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar::-webkit-scrollbar {
-    width: 8px;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-    background-color: #1abc9c; 
-    border-radius: 4px; 
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-    background-color: #16a085;
-}
-
-.sidebar::-webkit-scrollbar-track {
-    background-color: #2c3e50;
-}
-.sidebar {
+    background-color: #1E2A38;   /* dark background */
+    color: var(--text-color);
     height: 100vh;
-    background-color: var(--sidebar-bg);
+    width: 250px;               /* fixed width */
+    padding: 20px;
+    position: fixed;            /* fixed on left */
+    top: 0;
+    left: 0;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;           /* scroll if needed */
+}
+
+.sidebar .nav-item {
+    margin-bottom: 12px;
+}
+
+.sidebar .nav-link {
     color: var(--text-color);
-    position: fixed;
-    width: 250px;
-    overflow-y: scroll !important;
-}
-.sidebar .logo{
-    text-align: center !important;
-    width: 100%;
-    padding-left: 0 !important;
-}
-.sidebar .school_name{
-    text-align: center !important;
-    font-size: 20px;
-}
-.sidebar .logo:hover{
-    background-color: transparent;
-}
-.sidebar .logo .logo_img{
-    width: auto !important;
-    height: 70px !important;
-    margin: 25px 0 !important;
-}
-.sidebar a {
-    color: var(--text-color);
-    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 10px 15px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
-    font-size: 14.5px;
-    padding: 6px 20px;
-    transition: 0.3s all ease;
+    transition: all 0.3s ease-in-out;
 }
-.sidebar a:hover {
-    background-color: var(--sidebar-hover-bg);
+
+.sidebar .nav-link:hover {
+    background-color: #2c3e50;
+    color: #fff;
+    transform: translateX(5px);
 }
-.sidebar .collapse {
-    background-color: var(--sidebar-collapse-bg);
+
+.sidebar .nav-link i {
+    font-size: 1.1rem;
 }
-.sidebar .collapse.show {
-    height: auto;
-    visibility: visible; /* Make it visible when expanded */
+
+/* Active link */
+.sidebar .nav-link.active {
+    background-color: #2c3e50;
+    /* background-color: var(--accent-color, #f39c12); */
+    color: #fff;
+    font-weight: 600;
 }
-.sidebar .collapse a {
-    padding-left: 40px;
-    transition:padding-left 0.3s ease;
+
+/* Main Content Fix */
+.main-content {
+    margin-left: 250px;   /* same as sidebar width */
+    padding: 20px;
 }
-.sidebar .collapse a:hover {
-    background-color: var(--sidebar-collapse-hover-bg);
+
+/* Global scrollbar styles */
+::-webkit-scrollbar {
+    width: 1px; /* Slim width */
+    height: 1px; /* horizontal scrollbar height */
+}
+
+::-webkit-scrollbar-track {
+    background-color: #0C3958; /* Scroll thumb color */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #f1f1f1; /* Track background */
+    border-radius: 10px;
+    border: 2px solid #f1f1f1; /* Space around thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #E95420; /* Hover effect */
+}
+
+/* Firefox scrollbar */
+* {
+    scrollbar-width: thin; /* thin scrollbar */
+    scrollbar-color: #0C3958 #f1f1f1; /* thumb color, track color */
 }

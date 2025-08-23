@@ -3,7 +3,7 @@ name: Publish Website to CPanel
 on:
   push:
     branches:
-      - prod
+      - main
 
 jobs:
   ftp-deploy:

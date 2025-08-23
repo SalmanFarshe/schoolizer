@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign Up - Schoolizer</title>
   <?php
-    include("../../tem_parts/link.php");
+    include("includes/link.php");
   ?>
 </head>
 <body>
@@ -24,7 +24,7 @@
     <div style="height: 100vh; background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.58));" class="col-md-6 d-flex align-items-center justify-content-center">
       <div class="p-5">
         <div class="text-center">
-          <img src="../../assets/images/logo/schoolizer-logo.png" alt="Schoolizer Logo" class="sign-up-logo img-fluid mb-3" style="width: 100px;">
+          <img src="assets/images/logo/schoolizer-logo.png" alt="Schoolizer Logo" class="sign-up-logo img-fluid mb-3" style="width: 100px;">
           <p class="text-white">Create your account to get started</p>
         </div>
         <form action="#" method="POST">
@@ -64,7 +64,7 @@
           </div>
           <p class="text-center small text-info">
             Already have an account?
-            <a href="../../index.php" class="text-decoration-none">Login here</a>
+            <a href="index.php" class="text-decoration-none">Login here</a>
           </p>
         </form>
       </div>
@@ -74,7 +74,7 @@
 
 
 <?php
-    include("../../tem_parts/link-js.php");
+    include("includes/link-js.php");
 ?>
 </body>
 </html>

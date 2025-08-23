@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - Schoolizer</title>
   <?php
-    include("tem_parts/link.php");
+    include("includes/link.php");
   ?>
 </head>
 <body>
@@ -26,7 +26,7 @@
           <img src="assets/images/logo/schoolizer-logo.png" alt="Schoolizer Logo" class="sign-up-logo img-fluid mb-3" style="width: 100px;">
           <p class="text-white">Login to your account</p>
         </div>
-        <form method="POST" action="pages/dashboard.php">
+        <form method="POST" action="dashboard.php">
           <div class="row">
             <div class="col-md-12 mb-3">
               <label for="userrole" class="form-label text-white">Role</label>
@@ -47,7 +47,7 @@
           </div>
           <p class="text-center small text-info">
             Don't have an account?
-            <a href="pages/root/create-account.php" class="text-decoration-none">Create Account</a>
+            <a href="create-account.php" class="text-decoration-none">Create Account</a>
           </p>
         </form>
       </div>
@@ -57,7 +57,7 @@
 
 
 <?php
-    include("tem_parts/link-js.php");
+    include("includes/link-js.php");
 ?>
 </body>
 </html>
