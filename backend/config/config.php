@@ -1,11 +1,11 @@
 <?php
     $server_name = 'localhost';
-    // $dbusername = 'salmanfarshe_schoolizer';
-    $dbusername = 'root';
-    // $dbpassword = 'schoolizer@2025';
-    $dbpassword = '';
-    // $dbname = 'salmanfarshe_schoolizer';
-    $dbname = 'schoolizerdb';
+    $dbusername = 'salmanfarshe_schoolizer';
+    // $dbusername = 'root';
+    $dbpassword = 'schoolizer@2025';
+    // $dbpassword = '';
+    $dbname = 'salmanfarshe_schoolizer';
+    // $dbname = 'schoolizerdb';
 
     global $connection;
     $connection = mysqli_connect($server_name, $dbusername, $dbpassword);
