@@ -1,9 +1,9 @@
 <?php
 // Database configuration
 $host = "localhost";
-$user = "root";        // change if needed
-$pass = "";            // change if your MySQL has password
-$db   = "schoolizer";
+$user = "salmanfarshe_schoolizerr";        // change if needed
+$pass = "schoolizerr@2025";            // change if your MySQL has password
+$db   = "salmanfarshe_schoolizerr";
 
 // Create connection
 $conn = new mysqli($host, $user, $pass, $db);
