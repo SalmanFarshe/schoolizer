@@ -8,4 +8,4 @@
 <link href="<?php echo BASE_URLS; ?>/assets/css/bootstrap.min.css" rel="stylesheet">
 <link href="<?php echo BASE_URLS; ?>/assets/css/bootstrap-icons.css" rel="stylesheet">
 <link href="<?php echo BASE_URLS; ?>/assets/css/style.css" rel="stylesheet">
-<?php print_r($base_url); ?>
+<?php # print_r($base_url); ?>

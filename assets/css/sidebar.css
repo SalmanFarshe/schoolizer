@@ -13,13 +13,13 @@
 }
 
 .sidebar .nav-item {
-    margin-bottom: 12px;
+    margin-bottom: 6px;
 }
 
 .sidebar .nav-link {
     color: var(--text-color);
     font-size: 0.95rem;
-    padding: 10px 15px;
+    padding: 5px 15px;
     border-radius: 6px;
     display: flex;
     align-items: center;
