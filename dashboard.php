@@ -1,5 +1,11 @@
-<?php $active_page = 'dashboard.php'; ?>
-<?php include("backend/path.php"); ?>
+<?php 
+  // Only admin can access
+  require('backend/config/auth.php');
+  restrict_page(['admin']);
+
+  $active_page = 'dashboard.php'; 
+  include("backend/path.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

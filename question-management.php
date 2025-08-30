@@ -1,3 +1,8 @@
+<?php
+    // Only admin can access
+  require('backend/config/auth.php');
+  restrict_page(['admin']);
+?>
 <?php include("../backend/path.php"); ?>
 <!DOCTYPE html>
 <html lang="en">

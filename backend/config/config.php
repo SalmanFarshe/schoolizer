@@ -1,27 +1,18 @@
 <?php
-    $server_name = 'localhost';
-    $dbusername = 'salmanfarshe_schoolizer';
-    // $dbusername = 'root';
-    $dbpassword = 'schoolizer@2025';
-    // $dbpassword = '';
-    $dbname = 'salmanfarshe_schoolizer';
-    // $dbname = 'schoolizerdb';
+// Database configuration
+$host = "localhost";
+$user = "root";        // change if needed
+$pass = "";            // change if your MySQL has password
+$db   = "schoolizer";
 
-    global $connection;
-    $connection = mysqli_connect($server_name, $dbusername, $dbpassword);
-    if (!$connection) {
-        die('Connection failed: ' . mysqli_connect_error());
-    }
+// Create connection
+$conn = new mysqli($host, $user, $pass, $db);
 
-    $db_selected = mysqli_select_db($connection, $dbname);
-    if (!$db_selected) {
-        $create_db = "CREATE DATABASE IF NOT EXISTS $dbname";
-        if (!mysqli_query($connection, $create_db)) {
-            die("Error creating database: " . mysqli_error($connection));
-        }
-    }
-    $connection = mysqli_connect($server_name, $dbusername, $dbpassword, $dbname);
-    if (!$connection) {
-        die('Error reconnecting to the new database: ' . mysqli_connect_error());
-    }
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Set charset
+$conn->set_charset("utf8mb4");
 ?>

@@ -1,4 +1,9 @@
 <?php
+    // Only admin can access
+  require('backend/config/auth.php');
+  restrict_page(['admin']);
+?>
+<?php
   // Include the database connection
   include("backend/path.php");
   include("backend/config/config.php");

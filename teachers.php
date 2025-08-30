@@ -1,3 +1,9 @@
+<?php
+    // Only admin can access
+  require('backend/config/auth.php');
+  require('backend/config/config.php');
+  restrict_page(['admin']);
+?>
 <?php $active_page = 'teachers.php'; ?>
 <?php include("backend/path.php"); ?>
 <!DOCTYPE html>
@@ -37,207 +43,40 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Example Row 1 -->
-            <tr>
-              <td>TEA001</td>
-              <td>Mr. John Smith</td>
-              <td>Computer Science</td>
-              <td>john.smith@example.com</td>
-              <td>+880123456789</td>
-              <td class="d-flex justify-content-center gap-1">
-                <button class="btn btn-primary btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#viewTeacherModal"
-                        data-id="TEA001"
-                        data-name="Mr. John Smith"
-                        data-department="Computer Science"
-                        data-email="john.smith@example.com"
-                        data-phone="+880123456789"
-                        title="View">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-warning btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editTeacherModal"
-                        data-id="TEA001"
-                        data-name="Mr. John Smith"
-                        data-department="Computer Science"
-                        data-email="john.smith@example.com"
-                        data-phone="+880123456789"
-                        title="Edit">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#deleteTeacherModal"
-                        data-id="TEA001"
-                        data-name="Mr. John Smith"
-                        title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
+          <?php
+            $result = $conn->query("SELECT * FROM teachers ORDER BY id DESC");
+            while($row = $result->fetch_assoc()){
+               ?>
+               <tr>
+                    <td><?php echo $row['teacher_id']; ?></td>
+                    <td><?php echo $row['name']; ?></td>
+                    <td><?php echo $row['department']; ?></td>
+                    <td><?php echo $row['email']; ?></td>
+                    <td><?php echo $row['phone']; ?></td>
+                    <td class='d-flex justify-content-center gap-1'>
+                        <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#viewTeacherModal'
+                            data-id='<?php echo $row['teacher_id']; ?>' data-name='<?php echo $row['name']; ?>' data-department='<?php echo $row['department']; ?>'
+                            data-email='<?php echo $row['email']; ?>' data-phone='<?php echo $row['phone']; ?>' title='View'>
+                            <i class='bi bi-eye'></i>
+                        </button>
 
-            <!-- Example Row 2 -->
-            <tr>
-              <td>TEA002</td>
-              <td>Ms. Jane Doe</td>
-              <td>Mathematics</td>
-              <td>jane.doe@example.com</td>
-              <td>+880987654321</td>
-              <td class="d-flex justify-content-center gap-1">
-                <button class="btn btn-primary btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#viewTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        data-department="Mathematics"
-                        data-email="jane.doe@example.com"
-                        data-phone="+880987654321"
-                        title="View">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-warning btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        data-department="Mathematics"
-                        data-email="jane.doe@example.com"
-                        data-phone="+880987654321"
-                        title="Edit">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#deleteTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
-            <!-- Example Row 2 -->
-            <tr>
-              <td>TEA002</td>
-              <td>Ms. Jane Doe</td>
-              <td>Mathematics</td>
-              <td>jane.doe@example.com</td>
-              <td>+880987654321</td>
-              <td class="d-flex justify-content-center gap-1">
-                <button class="btn btn-primary btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#viewTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        data-department="Mathematics"
-                        data-email="jane.doe@example.com"
-                        data-phone="+880987654321"
-                        title="View">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-warning btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        data-department="Mathematics"
-                        data-email="jane.doe@example.com"
-                        data-phone="+880987654321"
-                        title="Edit">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#deleteTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
-            <!-- Example Row 2 -->
-            <tr>
-              <td>TEA002</td>
-              <td>Ms. Jane Doe</td>
-              <td>Mathematics</td>
-              <td>jane.doe@example.com</td>
-              <td>+880987654321</td>
-              <td class="d-flex justify-content-center gap-1">
-                <button class="btn btn-primary btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#viewTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        data-department="Mathematics"
-                        data-email="jane.doe@example.com"
-                        data-phone="+880987654321"
-                        title="View">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-warning btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        data-department="Mathematics"
-                        data-email="jane.doe@example.com"
-                        data-phone="+880987654321"
-                        title="Edit">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#deleteTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
-            <!-- Example Row 2 -->
-            <tr>
-              <td>TEA002</td>
-              <td>Ms. Jane Doe</td>
-              <td>Mathematics</td>
-              <td>jane.doe@example.com</td>
-              <td>+880987654321</td>
-              <td class="d-flex justify-content-center gap-1">
-                <button class="btn btn-primary btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#viewTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        data-department="Mathematics"
-                        data-email="jane.doe@example.com"
-                        data-phone="+880987654321"
-                        title="View">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-warning btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        data-department="Mathematics"
-                        data-email="jane.doe@example.com"
-                        data-phone="+880987654321"
-                        title="Edit">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#deleteTeacherModal"
-                        data-id="TEA002"
-                        data-name="Ms. Jane Doe"
-                        title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editTeacherModal"
+                            data-id='<?php echo $row['teacher_id']; ?>' data-name='<?php echo $row['name']; ?>' data-department='<?php echo $row['department']; ?>'
+                            data-email='<?php echo $row['email']; ?>' data-phone='<?php echo $row['phone']; ?>' title="Edit">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTeacherModal"
+                            data-id='<?php echo $row['teacher_id']; ?>' data-name='<?php echo $row['name']; ?>' title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+               
+               <?php
+            }
+            ?>
+
           </tbody>
         </table>
       </div>

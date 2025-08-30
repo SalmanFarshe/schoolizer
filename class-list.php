@@ -1,5 +1,12 @@
-<?php $active_page = 'class-list.php'; ?>
-<?php include("backend/path.php"); ?>
+<?php 
+  $active_page = 'class-list.php'; 
+  
+  // Only admin can access
+  require('backend/config/auth.php');
+  restrict_page(['admin']);
+
+  include("backend/path.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

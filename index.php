@@ -1,3 +1,7 @@
+<?php
+  require("backend/config/config.php");
+  require("backend/config/create_tables.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,7 +30,11 @@
           <img src="assets/images/logo/schoolizer-logo.png" alt="Schoolizer Logo" class="sign-up-logo img-fluid mb-3" style="width: 100px;">
           <p class="text-white">Login to your account</p>
         </div>
-        <form method="POST" action="dashboard.php">
+        <form method="POST" action="login-process.php">
+            <?php if(isset($error)): ?>
+                <div class="alert alert-danger"><?php echo $error; ?></div>
+            <?php endif; ?>
+
           <div class="row">
             <div class="col-md-12 mb-3">
               <label for="userrole" class="form-label text-white">Role</label>
