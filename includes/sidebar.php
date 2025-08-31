@@ -3,7 +3,7 @@
 
     // Check if user is logged in
     if (!isset($_SESSION['role'])) {
-        header("Location: login.php");
+        header("Location: index.php");
         exit();
     }
 
@@ -102,11 +102,18 @@
         <?php endif; ?>
 
         <?php if($role === 'student'): ?>
-            <li class="nav-item">
-                <a href="student-dash.php" class="nav-link <?php if($active_page == 'student-dash.php'){ echo 'active'; } ?>">
-                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                </a>
-            </li>
+            <!-- Student-only links -->
+            <li class="nav-item"><a href="student_dashboard.php" class="nav-link <?php if($active_page == 'student_dashboard.php'){ echo 'active'; } ?>"><i class="fas fa-tachometer-alt icon"></i> Dashboard</a></li>
+            <li class="nav-item"><a href="student_profile.php" class="nav-link <?php if($active_page == 'student_profile.php'){ echo 'active'; } ?>"><i class="fas fa-user-circle icon"></i> Profile</a></li>
+            <li class="nav-item"><a href="student_result.php" class="nav-link <?php if($active_page == 'student_result.php'){ echo 'active'; } ?>"><i class="fas fa-poll icon"></i> Result</a></li>
+            <li class="nav-item"><a href="student_notices.php" class="nav-link <?php if($active_page == 'student_notices.php'){ echo 'active'; } ?>"><i class="fas fa-bullhorn icon"></i> Notice</a></li>
+            <li class="nav-item"><a href="student_ledger.php" class="nav-link <?php if($active_page == 'student_ledger.php'){ echo 'active'; } ?>"><i class="fas fa-book icon"></i> Ledger</a></li>
+            <li class="nav-item"><a href="student_note.php" class="nav-link <?php if($active_page == 'student_note.php'){ echo 'active'; } ?>"><i class="fas fa-sticky-note icon"></i> Note</a></li>
+            <li class="nav-item"><a href="student_routine.php" class="nav-link <?php if($active_page == 'student_routine.php'){ echo 'active'; } ?>"><i class="fas fa-calendar-alt icon"></i> Routine</a></li>
+            <li class="nav-item"><a href="student_attendance.php" class="nav-link <?php if($active_page == 'student_attendance.php'){ echo 'active'; } ?>"><i class="fas fa-chart-bar icon"></i> Attendance Report</a></li>
+            <li class="nav-item"><a href="student_quiz.php" class="nav-link <?php if($active_page == 'student_quiz.php'){ echo 'active'; } ?>"><i class="fas fa-question-circle icon"></i> Attempt Quiz</a></li>
+            <li class="nav-item"><a href="student_admit_card.php" class="nav-link <?php if($active_page == 'student_admit_card.php'){ echo 'active'; } ?>"><i class="fas fa-id-card icon"></i> Admit Card</a></li>
+            <li class="nav-item"><a href="student_academic_dates.php" class="nav-link <?php if($active_page == 'student_academic_dates.php'){ echo 'active'; } ?>"><i class="fas fa-calendar-check icon"></i> Academic Dates</a></li>
         <?php endif; ?>
 
         <!-- Logout (all roles) -->
