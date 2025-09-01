@@ -1,10 +1,11 @@
 <?php
-    // Only admin can access
-    require('backend/config/auth.php');
-    restrict_page(['admin', 'teacher']);
-  $active_page = 'student-list.php'; 
-  include("backend/path.php");
+  // Only admin can access
+  require('backend/config/auth.php');
+  require('backend/config/config.php');
+  restrict_page(['admin']);
 ?>
+<?php $active_page = 'student-list.php'; ?>
+<?php include("backend/path.php"); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,168 +41,168 @@
               <th>Father's Name</th>
               <th>Mother's Name</th>
               <th>CGPA</th>
+              <th>Email</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <!-- Example Row 1 -->
-            <tr>
-              <td>STU001</td>
-              <td>01</td>
-              <td>John Doe</td>
-              <td>10</td>
-              <td>Michael Doe</td>
-              <td>Sarah Doe</td>
-              <td>3.85</td>
-              <td class="d-flex justify-content-center gap-1">
-                <!-- View Button -->
-                <button class="btn btn-primary btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#viewModal"
-                        data-id="STU001"
-                        data-name="John Doe"
-                        data-class="10"
-                        data-roll="01"
-                        data-cgpa="3.85"
-                        data-father="Michael Doe"
-                        data-mother="Sarah Doe"
-                        title="View">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <!-- Edit Button -->
-                <button class="btn btn-warning btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editModal"
-                        data-id="STU001"
-                        data-name="John Doe"
-                        data-class="10"
-                        data-roll="01"
-                        title="Edit">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-                <!-- Delete Button -->
-                <button class="btn btn-danger btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#deleteModal"
-                        data-id="STU001"
-                        data-name="John Doe"
-                        title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-                <!-- Download Button -->
-                <button class="btn btn-success btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#downloadModal"
-                        data-id="STU001"
-                        data-name="John Doe"
-                        title="Download">
-                  <i class="bi bi-download"></i>
-                </button>
-              </td>
-            </tr>
+          <?php
+            $result = $conn->query("SELECT * FROM students ORDER BY id DESC");
+            while($row = $result->fetch_assoc()){
+               ?>
+               <tr>
+                    <td><?php echo $row['student_id']; ?></td>
+                    <td><?php echo $row['roll']; ?></td>
+                    <td><?php echo $row['name']; ?></td>
+                    <td><?php echo $row['class']; ?></td>
+                    <td><?php echo $row['father_name']; ?></td>
+                    <td><?php echo $row['mother_name']; ?></td>
+                    <td><?php echo $row['cgpa']; ?></td>
+                    <td><?php echo $row['email']; ?></td>
+                    <td class='d-flex justify-content-center gap-1'>
+                        <!-- View -->
+                        <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#viewStudentModal'
+                            data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>'
+                            data-roll='<?php echo $row['roll']; ?>' data-class='<?php echo $row['class']; ?>'
+                            data-father='<?php echo $row['father_name']; ?>' data-mother='<?php echo $row['mother_name']; ?>'
+                            data-cgpa='<?php echo $row['cgpa']; ?>' data-email='<?php echo $row['email']; ?>' title='View'>
+                            <i class='bi bi-eye'></i>
+                        </button>
+
+<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal"
+    data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>'
+    data-roll='<?php echo $row['roll']; ?>' data-class='<?php echo $row['class']; ?>'
+    data-father='<?php echo $row['father_name']; ?>' data-mother='<?php echo $row['mother_name']; ?>'
+    data-cgpa='<?php echo $row['cgpa']; ?>' data-email='<?php echo $row['email']; ?>' title="Edit">
+    <i class="bi bi-pencil-square"></i>
+</button>
+
+
+                        <!-- Delete -->
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteStudentModal"
+                            data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>' title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                       <!-- Download PDF Button -->
+<button class="btn btn-success btn-sm"
+    onclick="window.location.href='processes/download-student.php?student_id=<?php echo $row['student_id']; ?>'">
+    <i class="bi bi-download"></i>
+</button>
+
+                    </td>
+                </tr>
+               
+               <?php
+            }
+            ?>
           </tbody>
         </table>
       </div>
 
       <!-- Modals -->
 
-      <!-- View Modal -->
-      <div class="modal fade" id="viewModal" tabindex="-1">
+      <!-- View Student Modal -->
+      <div class="modal fade zoom-in" id="viewStudentModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header bg-dark text-white">
-              <h5 class="modal-title">Student Result Card</h5>
+              <h5 class="modal-title">Student Details</h5>
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <h4 id="viewName">Name: </h4>
-              <p><b>Class:</b> <span id="viewClass"></span></p>
-              <p><b>Roll:</b> <span id="viewRoll"></span></p>
-              <p><b>Father’s Name:</b> <span id="viewFather"></span></p>
-              <p><b>Mother’s Name:</b> <span id="viewMother"></span></p>
-              <p><b>CGPA:</b> <span id="viewCgpa"></span></p>
+              <h4 id="viewStudentName">Name: </h4>
+              <p><b>Roll:</b> <span id="viewStudentRoll"></span></p>
+              <p><b>Class:</b> <span id="viewStudentClass"></span></p>
+              <p><b>Father:</b> <span id="viewStudentFather"></span></p>
+              <p><b>Mother:</b> <span id="viewStudentMother"></span></p>
+              <p><b>CGPA:</b> <span id="viewStudentCgpa"></span></p>
+              <p><b>Email:</b> <span id="viewStudentEmail"></span></p>
             </div>
             <div class="modal-footer">
               <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button class="btn btn-success">Download PDF</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Edit Modal -->
-      <div class="modal fade" id="editModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-dark text-dark">
-              <h5 class="modal-title">Edit Student</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              <form id="editForm">
-                <input type="hidden" id="editId" name="student_id">
-                <div class="mb-3">
-                  <label class="form-label">Student Name</label>
-                  <input type="text" class="form-control" id="editName" name="student_name">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Roll</label>
-                  <input type="text" class="form-control" id="editRoll" name="student_roll">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Class</label>
-                  <input type="text" class="form-control" id="editClass" name="student_class">
-                </div>
-                <div class="text-end">
-                  <button type="submit" class="btn btn-success">Save Changes</button>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+      <!-- Edit Student Modal -->
+<div class="modal fade zoom-in" id="editStudentModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title">Edit Student</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
+      <div class="modal-body">
+        <form id="editStudentForm" method="POST" action="processes/edit-student.php">
+          <input type="hidden" id="editStudentId" name="student_id">
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" id="editStudentName" name="student_name" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Roll</label>
+            <input type="text" class="form-control" id="editStudentRoll" name="roll" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Class</label>
+            <input type="text" class="form-control" id="editStudentClass" name="class" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Father's Name</label>
+            <input type="text" class="form-control" id="editStudentFather" name="father_name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Mother's Name</label>
+            <input type="text" class="form-control" id="editStudentMother" name="mother_name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">CGPA</label>
+            <input type="text" class="form-control" id="editStudentCgpa" name="cgpa">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" id="editStudentEmail" name="email" required>
+          </div>
+          <div class="text-end">
+            <button type="submit" class="btn btn-success">Save Changes</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-      <!-- Delete Modal -->
-      <div class="modal fade" id="deleteModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-              <h5 class="modal-title">Delete Student</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              <p>Are you sure you want to delete <b id="deleteName"></b>?</p>
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-danger" id="confirmDeleteBtn">Yes, Delete</button>
-              <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Download Modal -->
-      <div class="modal fade" id="downloadModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-              <h5 class="modal-title">Download Student Report</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              <p>Download report for <b id="downloadName"></b>.</p>
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-success">Download PDF</button>
-              <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
-          </div>
-        </div>
+<!-- Delete Student Modal -->
+<div class="modal fade zoom-in" id="deleteStudentModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title">Delete Student</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <b id="deleteStudentName"></b>?</p>
+      </div>
+      <div class="modal-footer">
+        <form action="processes/delete-std.php" method="POST">
+          <input type="hidden" name="student_id" id="deleteStudentId">
+          <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        </form>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <!-- Download Modal --> <div class="modal fade" id="downloadModal" tabindex="-1"> <div class="modal-dialog modal-dialog-centered"> <div class="modal-content"> <div class="modal-header bg-dark text-white"> <h5 class="modal-title">Download Student Report</h5> <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button> </div> <div class="modal-body"> <p>Download report for <b id="downloadName"></b>.</p> </div> <div class="modal-footer"> <button class="btn btn-success">Download PDF</button> <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> </div> </div> </div> </div>
 
       <!-- Add Student Modal -->
-      <div class="modal fade zoom-in" id="addStudentModal" tabindex="-1" aria-hidden="true">
+      <div class="modal fade zoom-in" id="addStudentModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header bg-dark text-white">
@@ -209,22 +210,34 @@
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <form action="add-student-process.php" method="POST">
+              <form action="processes/add-student-process.php" method="POST">
                 <div class="mb-3">
-                  <label class="form-label">Student Name</label>
+                  <label class="form-label">Name</label>
                   <input type="text" class="form-control" name="student_name" required>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Roll Number</label>
-                  <input type="text" class="form-control" name="student_roll" required>
+                  <label class="form-label">Roll</label>
+                  <input type="text" class="form-control" name="roll" required>
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Class</label>
-                  <input type="text" class="form-control" name="student_class" required>
+                  <input type="text" class="form-control" name="class" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Father’s Name</label>
+                  <input type="text" class="form-control" name="father_name">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Mother’s Name</label>
+                  <input type="text" class="form-control" name="mother_name">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">CGPA</label>
+                  <input type="text" class="form-control" name="cgpa">
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Email</label>
-                  <input type="email" class="form-control" name="student_email">
+                  <input type="email" class="form-control" name="email">
                 </div>
                 <div class="text-end">
                   <button type="submit" class="btn btn-success">Save</button>
@@ -235,46 +248,52 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
 
   <script src="assets/js/bootstrap.bundle.min.js"></script>
   <script>
-    // View Modal
-    var viewModal = document.getElementById('viewModal');
-    viewModal.addEventListener('show.bs.modal', function (event) {
+    // View Student
+    var viewModal = document.getElementById('viewStudentModal');
+    viewModal.addEventListener('show.bs.modal', function(event){
       var button = event.relatedTarget;
-      document.getElementById('viewName').innerText = "Name: " + button.dataset.name;
-      document.getElementById('viewClass').innerText = button.dataset.class;
-      document.getElementById('viewRoll').innerText = button.dataset.roll;
-      document.getElementById('viewFather').innerText = button.dataset.father;
-      document.getElementById('viewMother').innerText = button.dataset.mother;
-      document.getElementById('viewCgpa').innerText = button.dataset.cgpa;
+      document.getElementById('viewStudentName').innerText = "Name: " + button.dataset.name;
+      document.getElementById('viewStudentRoll').innerText = button.dataset.roll;
+      document.getElementById('viewStudentClass').innerText = button.dataset.class;
+      document.getElementById('viewStudentFather').innerText = button.dataset.father;
+      document.getElementById('viewStudentMother').innerText = button.dataset.mother;
+      document.getElementById('viewStudentCgpa').innerText = button.dataset.cgpa;
+      document.getElementById('viewStudentEmail').innerText = button.dataset.email;
     });
 
-    // Edit Modal
-    var editModal = document.getElementById('editModal');
-    editModal.addEventListener('show.bs.modal', function (event) {
-      var button = event.relatedTarget;
-      document.getElementById('editId').value = button.dataset.id;
-      document.getElementById('editName').value = button.dataset.name;
-      document.getElementById('editRoll').value = button.dataset.roll;
-      document.getElementById('editClass').value = button.dataset.class;
-    });
+// Edit Student
+var editModal = document.getElementById('editStudentModal');
+editModal.addEventListener('show.bs.modal', function(event){
+    var button = event.relatedTarget;
 
-    // Delete Modal
-    var deleteModal = document.getElementById('deleteModal');
-    deleteModal.addEventListener('show.bs.modal', function (event) {
-      var button = event.relatedTarget;
-      document.getElementById('deleteName').innerText = button.dataset.name;
-    });
+    document.getElementById('editStudentId').value = button.dataset.id;
+    document.getElementById('editStudentName').value = button.dataset.name;
+    document.getElementById('editStudentRoll').value = button.dataset.roll;
+    document.getElementById('editStudentClass').value = button.dataset.class;
+    document.getElementById('editStudentFather').value = button.dataset.father || '';
+    document.getElementById('editStudentMother').value = button.dataset.mother || '';
+    document.getElementById('editStudentCgpa').value = button.dataset.cgpa || '';
+    document.getElementById('editStudentEmail').value = button.dataset.email;
+});
 
-    // Download Modal
-    var downloadModal = document.getElementById('downloadModal');
-    downloadModal.addEventListener('show.bs.modal', function (event) {
-      var button = event.relatedTarget;
-      document.getElementById('downloadName').innerText = button.dataset.name;
-    });
+
+// Delete Student Modal
+var deleteModal = document.getElementById('deleteStudentModal');
+deleteModal.addEventListener('show.bs.modal', function(event){
+    var button = event.relatedTarget;
+    var studentName = button.dataset.name;
+    var studentId = button.dataset.id;
+
+    document.getElementById('deleteStudentName').innerText = studentName;
+    document.getElementById('deleteStudentId').value = studentId;
+});
+
   </script>
 </body>
 </html>

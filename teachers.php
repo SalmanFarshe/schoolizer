@@ -1,5 +1,5 @@
 <?php
-    // Only admin can access
+  // Only admin can access
   require('backend/config/auth.php');
   require('backend/config/config.php');
   restrict_page(['admin']);
@@ -99,7 +99,6 @@
             </div>
             <div class="modal-footer">
               <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button class="btn btn-success">Download PDF</button>
             </div>
           </div>
         </div>
@@ -114,7 +113,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <form id="editTeacherForm">
+              <form id="editTeacherForm" action="processes/edit-teacher-process.php" method="POST">
                 <input type="hidden" id="editTeacherId" name="teacher_id">
                 <div class="mb-3">
                   <label class="form-label">Name</label>
@@ -137,6 +136,7 @@
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
               </form>
+
             </div>
           </div>
         </div>
@@ -154,8 +154,12 @@
               <p>Are you sure you want to delete <b id="deleteTeacherName"></b>?</p>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-danger" id="confirmDeleteTeacherBtn">Yes, Delete</button>
+              <form action="processes/delete-teacher.php" method="POST">
+                  <input type="hidden" name="teacher_id" id="deleteTeacherId">
+                  <button type="submit" class="btn btn-danger">Yes, Delete</button>
+              </form>
               <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
             </div>
           </div>
         </div>
@@ -170,7 +174,7 @@
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <form action="add-teacher-process.php" method="POST">
+              <form action="processes/add-teacher-process.php" method="POST">
                 <div class="mb-3">
                   <label class="form-label">Name</label>
                   <input type="text" class="form-control" name="teacher_name" required>
@@ -196,7 +200,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -223,12 +226,13 @@
       document.getElementById('editTeacherPhone').value = button.dataset.phone;
     });
 
-    // Delete Teacher Modal
     var deleteModal = document.getElementById('deleteTeacherModal');
     deleteModal.addEventListener('show.bs.modal', function(event){
       var button = event.relatedTarget;
       document.getElementById('deleteTeacherName').innerText = button.dataset.name;
+      document.getElementById('deleteTeacherId').value = button.dataset.id; // important
     });
+
 
     // Download Teacher Modal
     var downloadModal = document.getElementById('downloadTeacherModal');
