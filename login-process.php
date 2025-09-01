@@ -19,18 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             // Set session variables
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['name'];
+            $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
 
             // Redirect based on role
-            if ($user['role'] === 'admin') {
+            if ($user['role'] === 'admin' || 'teacher' || 'student') {
                 header("Location: dashboard.php");
-                exit();
-            } elseif ($user['role'] === 'teacher') {
-                header("Location: teacher-dash.php");
-                exit();
-            } elseif ($user['role'] === 'student') {
-                header("Location: student-dash.php");
                 exit();
             }
         } else {

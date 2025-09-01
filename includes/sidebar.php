@@ -14,9 +14,7 @@
 <nav class="sidebar vh-100 d-flex flex-column">
     <!-- Logo -->
     <div class="sidebar-logo text-center py-3">
-        <a href="<?php 
-            echo ($role === 'admin') ? 'dashboard.php' : (($role === 'teacher') ? 'teacher-dash.php' : 'student-dash.php'); 
-        ?>">
+        <a href="dashboard.php">
             <img src="assets/images/logo/schoolizer-logo.png" alt="Schoolizer Logo" 
                  class="img-fluid me-2 p-1 rounded bg-white" style="max-height: 50px;">
         </a>
@@ -96,6 +94,11 @@
         <?php if($role === 'teacher'): ?>
             <li class="nav-item">
                 <a href="teacher-dash.php" class="nav-link <?php if($active_page == 'teacher-dash.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="student-list.php" class="nav-link <?php if($active_page == 'teacher-dash.php'){ echo 'active'; } ?>">
                     <i class="bi bi-speedometer2 me-2"></i> Dashboard
                 </a>
             </li>

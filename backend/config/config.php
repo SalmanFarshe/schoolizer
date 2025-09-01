@@ -1,8 +1,10 @@
 <?php
 // Database configuration
 $host = "localhost";
-$user = "salmanfarshe_schoolizerr";        // change if needed
-$pass = "schoolizerr@2025";            // change if your MySQL has password
+// $user = "salmanfarshe_schoolizerr";        // change if needed
+$user = "root";        // change if needed
+// $pass = "schoolizerr@2025";            // change if your MySQL has password
+$pass = "";            // change if your MySQL has password
 $db   = "salmanfarshe_schoolizerr";
 
 // Create connection

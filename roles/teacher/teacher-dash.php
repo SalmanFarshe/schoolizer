@@ -1,63 +1,38 @@
-<?php 
-// Only teachers can access
-require('backend/config/auth.php');
-restrict_page(['teacher']);
-
-$active_page = 'teacher-dashboard.php';
-include("backend/path.php");
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teacher Dashboard | Schoolizer</title>
-<?php require_once("includes/link.php"); ?>
-</head>
-<body>
-<?php require_once("includes/sidebar.php"); ?>
-
-<div class="main-content p-4">
-<div class="container">
-
-  <h1 class="h3 mb-4">Teacher Dashboard</h1>
-  <p>Welcome, Teacher! Here is the summary of your section.</p>
-
   <!-- Quick Stats Cards -->
   <div class="row mb-4">
     <div class="col-md-3 mb-3">
       <div class="card text-white bg-primary">
         <div class="card-body text-center">
-          <h5>Total Students</h5>
-          <h2>120</h2>
           <i class="bi bi-people-fill fs-2"></i>
+          <h2>120</h2>
+          <h5>Total Students</h5>
         </div>
       </div>
     </div>
     <div class="col-md-3 mb-3">
       <div class="card text-white bg-success">
         <div class="card-body text-center">
-          <h5>Total Classes</h5>
-          <h2>5</h2>
           <i class="bi bi-journal-bookmark-fill fs-2"></i>
+          <h2>5</h2>
+          <h5>Total Classes</h5>
         </div>
       </div>
     </div>
     <div class="col-md-3 mb-3">
       <div class="card text-white bg-warning">
         <div class="card-body text-center">
-          <h5>Total Subjects</h5>
-          <h2>8</h2>
           <i class="bi bi-book-fill fs-2"></i>
+          <h2>8</h2>
+          <h5>Total Subjects</h5>
         </div>
       </div>
     </div>
     <div class="col-md-3 mb-3">
       <div class="card text-white bg-danger">
         <div class="card-body text-center">
-          <h5>Attendance Taken</h5>
-          <h2>15</h2>
           <i class="bi bi-check2-square fs-2"></i>
+          <h2>15</h2>
+          <h5>Attendance Taken</h5>
         </div>
       </div>
     </div>
@@ -113,7 +88,3 @@ include("backend/path.php");
 
 </div>
 </div>
-
-<script src="assets/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
