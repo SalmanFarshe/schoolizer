@@ -69,13 +69,13 @@
                             <i class='bi bi-eye'></i>
                         </button>
 
-<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal"
-    data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>'
-    data-roll='<?php echo $row['roll']; ?>' data-class='<?php echo $row['class']; ?>'
-    data-father='<?php echo $row['father_name']; ?>' data-mother='<?php echo $row['mother_name']; ?>'
-    data-cgpa='<?php echo $row['cgpa']; ?>' data-email='<?php echo $row['email']; ?>' title="Edit">
-    <i class="bi bi-pencil-square"></i>
-</button>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal"
+                            data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>'
+                            data-roll='<?php echo $row['roll']; ?>' data-class='<?php echo $row['class']; ?>'
+                            data-father='<?php echo $row['father_name']; ?>' data-mother='<?php echo $row['mother_name']; ?>'
+                            data-cgpa='<?php echo $row['cgpa']; ?>' data-email='<?php echo $row['email']; ?>' title="Edit">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
 
 
                         <!-- Delete -->
@@ -85,10 +85,10 @@
                         </button>
 
                        <!-- Download PDF Button -->
-<button class="btn btn-success btn-sm"
-    onclick="window.location.href='processes/download-student.php?student_id=<?php echo $row['student_id']; ?>'">
-    <i class="bi bi-download"></i>
-</button>
+                      <button class="btn btn-success btn-sm"
+                          onclick="window.location.href='processes/download-student.php?student_id=<?php echo $row['student_id']; ?>'">
+                          <i class="bi bi-download"></i>
+                      </button>
 
                     </td>
                 </tr>
@@ -199,7 +199,24 @@
 </div>
 
 
-      <!-- Download Modal --> <div class="modal fade" id="downloadModal" tabindex="-1"> <div class="modal-dialog modal-dialog-centered"> <div class="modal-content"> <div class="modal-header bg-dark text-white"> <h5 class="modal-title">Download Student Report</h5> <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button> </div> <div class="modal-body"> <p>Download report for <b id="downloadName"></b>.</p> </div> <div class="modal-footer"> <button class="btn btn-success">Download PDF</button> <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> </div> </div> </div> </div>
+      <!-- Download Modal -->
+      <div class="modal fade" id="downloadModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+              <h5 class="modal-title">Download Student Report</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <p>Download report for <b id="downloadName"></b>.</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-success">Download PDF</button>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Add Student Modal -->
       <div class="modal fade zoom-in" id="addStudentModal" tabindex="-1">

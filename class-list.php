@@ -6,6 +6,10 @@
   restrict_page(['admin']);
 
   include("backend/path.php");
+  require('backend/config/config.php');
+
+  // Fetch all classes
+  $classes = $conn->query("SELECT * FROM classes ORDER BY id DESC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,222 +48,198 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Example Row 1 -->
-            <tr>
-              <td>CLS001</td>
-              <td>10</td>
-              <td>A</td>
-              <td>Mr. John Smith</td>
-              <td>45</td>
-              <td class="d-flex justify-content-center gap-1">
-                <button class="btn btn-primary btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#viewClassModal"
-                        data-id="CLS001"
-                        data-name="10"
-                        data-section="A"
-                        data-teacher="Mr. John Smith"
-                        data-students="45"
-                        title="View">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-warning btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editClassModal"
-                        data-id="CLS001"
-                        data-name="10"
-                        data-section="A"
-                        data-teacher="Mr. John Smith"
-                        data-students="45"
-                        title="Edit">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#deleteClassModal"
-                        data-id="CLS001"
-                        data-name="10"
-                        title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
-
-            <!-- Example Row 2 -->
-            <tr>
-              <td>CLS002</td>
-              <td>10</td>
-              <td>B</td>
-              <td>Ms. Jane Doe</td>
-              <td>42</td>
-              <td class="d-flex justify-content-center gap-1">
-                <button class="btn btn-primary btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#viewClassModal"
-                        data-id="CLS002"
-                        data-name="10"
-                        data-section="B"
-                        data-teacher="Ms. Jane Doe"
-                        data-students="42"
-                        title="View">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-warning btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editClassModal"
-                        data-id="CLS002"
-                        data-name="10"
-                        data-section="B"
-                        data-teacher="Ms. Jane Doe"
-                        data-students="42"
-                        title="Edit">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#deleteClassModal"
-                        data-id="CLS002"
-                        data-name="10"
-                        title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
+            <?php if ($classes->num_rows > 0): ?>
+              <?php while($row = $classes->fetch_assoc()): ?>
+                <tr>
+                  <td><?= htmlspecialchars($row['class_id']) ?></td>
+                  <td><?= htmlspecialchars($row['class_name']) ?></td>
+                  <td><?= htmlspecialchars($row['section']) ?></td>
+                  <td><?= htmlspecialchars($row['teacher_in_charge']) ?></td>
+                  <td><?= htmlspecialchars($row['num_students']) ?></td>
+                  <td class="d-flex justify-content-center gap-1">
+                    <!-- View -->
+                    <button class="btn btn-primary btn-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#viewClassModal"
+                            data-id="<?= $row['class_id'] ?>"
+                            data-name="<?= $row['class_name'] ?>"
+                            data-section="<?= $row['section'] ?>"
+                            data-teacher="<?= $row['teacher_in_charge'] ?>"
+                            data-students="<?= $row['num_students'] ?>"
+                            title="View">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <!-- Edit -->
+                    <button class="btn btn-warning btn-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#editClassModal"
+                            data-id="<?= $row['class_id'] ?>"
+                            data-name="<?= $row['class_name'] ?>"
+                            data-section="<?= $row['section'] ?>"
+                            data-teacher="<?= $row['teacher_in_charge'] ?>"
+                            data-students="<?= $row['num_students'] ?>"
+                            title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <!-- Delete -->
+                    <button class="btn btn-danger btn-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#deleteClassModal"
+                            data-id="<?= $row['class_id'] ?>"
+                            data-name="<?= $row['class_name'] ?>"
+                            title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              <?php endwhile; ?>
+            <?php else: ?>
+              <tr>
+                <td colspan="6">No classes found</td>
+              </tr>
+            <?php endif; ?>
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
 
-      <!-- Modals -->
-
-      <!-- Add Class Modal -->
-      <div class="modal fade zoom-in" id="addClassModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-              <h5 class="modal-title">Add New Class</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              <form action="add-class-process.php" method="POST">
-                <div class="mb-3">
-                  <label class="form-label">Class Name</label>
-                  <input type="text" class="form-control" name="class_name" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Section</label>
-                  <input type="text" class="form-control" name="section">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Teacher In Charge</label>
-                  <input type="text" class="form-control" name="teacher_in_charge">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Number of Students</label>
-                  <input type="number" class="form-control" name="num_students">
-                </div>
-                <div class="text-end">
-                  <button type="submit" class="btn btn-success">Save</button>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-              </form>
-            </div>
+<!-- Add Class Modal -->
+<div class="modal fade" id="addClassModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-3 shadow-lg">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Add New Class</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form action="backend/classes/add-class.php" method="POST">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Class Name</label>
+            <input type="text" class="form-control" name="class_name" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Section</label>
+            <input type="text" class="form-control" name="section">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Assign Teacher</label>
+            <select class="form-select" name="teacher_id" required>
+              <option value="" disabled selected>Select teacher</option>
+              <?php
+                // Load teachers from teachers table
+                $result = $conn->query("SELECT id, name FROM teachers");
+                while($row = $result->fetch_assoc()) {
+                  echo "<option value='".$row['id']."'>".$row['name']."</option>";
+                }
+              ?>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Room Number</label>
+            <input type="text" class="form-control" name="room_no">
           </div>
         </div>
-      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Class</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-      <!-- View Class Modal -->
-      <div class="modal fade" id="viewClassModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-              <h5 class="modal-title">Class Details</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              <h4 id="viewClassName">Class: </h4>
-              <p><b>Section:</b> <span id="viewClassSection"></span></p>
-              <p><b>Teacher In Charge:</b> <span id="viewClassTeacher"></span></p>
-              <p><b>Number of Students:</b> <span id="viewClassStudents"></span></p>
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-          </div>
+
+  <!-- View Class Modal -->
+  <div class="modal fade" id="viewClassModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-3 shadow-lg">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title">View Class</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Class Name:</strong> <span id="viewClassName"></span></p>
+          <p><strong>Section:</strong> <span id="viewClassSection"></span></p>
+          <p><strong>Teacher:</strong> <span id="viewClassTeacher"></span></p>
+          <p><strong>Students:</strong> <span id="viewClassStudents"></span></p>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- Edit Class Modal -->
-      <div class="modal fade" id="editClassModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-warning text-dark">
-              <h5 class="modal-title">Edit Class</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  <!-- Edit Class Modal -->
+  <div class="modal fade" id="editClassModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-3 shadow-lg">
+        <div class="modal-header bg-warning text-dark">
+          <h5 class="modal-title">Edit Class</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form action="backend/classes/edit-class.php" method="POST">
+          <div class="modal-body">
+            <input type="hidden" name="class_id" id="editClassId">
+            <div class="mb-3">
+              <label class="form-label">Class Name</label>
+              <input type="text" class="form-control" name="class_name" id="editClassName" required>
             </div>
-            <div class="modal-body">
-              <form id="editClassForm">
-                <input type="hidden" id="editClassId" name="class_id">
-                <div class="mb-3">
-                  <label class="form-label">Class Name</label>
-                  <input type="text" class="form-control" id="editClassName" name="class_name">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Section</label>
-                  <input type="text" class="form-control" id="editClassSection" name="section">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Teacher In Charge</label>
-                  <input type="text" class="form-control" id="editClassTeacher" name="teacher_in_charge">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Number of Students</label>
-                  <input type="number" class="form-control" id="editClassStudents" name="num_students">
-                </div>
-                <div class="text-end">
-                  <button type="submit" class="btn btn-success">Save Changes</button>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-              </form>
+            <div class="mb-3">
+              <label class="form-label">Section</label>
+              <input type="text" class="form-control" name="section" id="editClassSection">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Teacher</label>
+              <input type="text" class="form-control" name="teacher" id="editClassTeacher">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Students</label>
+              <input type="number" class="form-control" name="num_students" id="editClassStudents">
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Delete Class Modal -->
-      <div class="modal fade" id="deleteClassModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-              <h5 class="modal-title">Delete Class</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              <p>Are you sure you want to delete class <b id="deleteClassName"></b>?</p>
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-danger" id="confirmDeleteClassBtn">Yes, Delete</button>
-              <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-warning">Save Changes</button>
           </div>
-        </div>
+        </form>
       </div>
+    </div>
+  </div>
 
+  <!-- Delete Class Modal -->
+  <div class="modal fade" id="deleteClassModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-3 shadow-lg">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">Delete Class</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form action="backend/classes/delete-class.php" method="POST">
+          <div class="modal-body">
+            <input type="hidden" name="class_id" id="deleteClassId">
+            <p>Are you sure you want to delete <strong id="deleteClassName"></strong>?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
   <script src="assets/js/bootstrap.bundle.min.js"></script>
   <script>
-    // View Class Modal
+    // View
     var viewClassModal = document.getElementById('viewClassModal');
     viewClassModal.addEventListener('show.bs.modal', function(event){
       var button = event.relatedTarget;
-      document.getElementById('viewClassName').innerText = "Class: " + button.dataset.name;
+      document.getElementById('viewClassName').innerText = button.dataset.name;
       document.getElementById('viewClassSection').innerText = button.dataset.section;
       document.getElementById('viewClassTeacher').innerText = button.dataset.teacher;
       document.getElementById('viewClassStudents').innerText = button.dataset.students;
     });
 
-    // Edit Class Modal
+    // Edit
     var editClassModal = document.getElementById('editClassModal');
     editClassModal.addEventListener('show.bs.modal', function(event){
       var button = event.relatedTarget;
@@ -270,10 +250,11 @@
       document.getElementById('editClassStudents').value = button.dataset.students;
     });
 
-    // Delete Class Modal
+    // Delete
     var deleteClassModal = document.getElementById('deleteClassModal');
     deleteClassModal.addEventListener('show.bs.modal', function(event){
       var button = event.relatedTarget;
+      document.getElementById('deleteClassId').value = button.dataset.id;
       document.getElementById('deleteClassName').innerText = button.dataset.name;
     });
   </script>

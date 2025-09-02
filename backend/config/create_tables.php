@@ -50,6 +50,18 @@
     );";
     executeQuery($conn, $sql_students, "students");
 
+    // SQL to create `classes` table
+    $sql_classes = "
+        CREATE TABLE IF NOT EXISTS classes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        class_id VARCHAR(50) UNIQUE NOT NULL,
+        class_name VARCHAR(100) NOT NULL,
+        section VARCHAR(50),
+        teacher_in_charge VARCHAR(100),
+        num_students INT DEFAULT 0
+    );";
+    executeQuery($conn, $sql_stude, "classes");
+
     // Close the connection
     mysqli_close($conn);
 ?>

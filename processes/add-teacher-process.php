@@ -1,5 +1,4 @@
 <?php
-session_start();
 require('../backend/config/config.php');
 require('../backend/config/auth.php');
 restrict_page(['admin']);
@@ -10,10 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email      = trim($_POST['email']);
     $phone      = trim($_POST['phone']);
 
-    // Generate teacher_id safely
-    $result = $conn->query("SELECT COUNT(*) AS total FROM teachers");
+    // Generate teacher_id safely using MAX(id)
+    $result = $conn->query("SELECT MAX(id) AS max_id FROM teachers");
     $row = $result->fetch_assoc();
-    $teacher_id = 'TEA' . str_pad($row['total'] + 1, 3, '0', STR_PAD_LEFT);
+    $next_id = $row['max_id'] + 1;
+    $teacher_id = 'TEA' . str_pad($next_id, 3, '0', STR_PAD_LEFT);
 
     $stmt = $conn->prepare("INSERT INTO teachers (teacher_id, name, department, email, phone) VALUES (?, ?, ?, ?, ?)");
     if (!$stmt) die("Prepare failed: " . $conn->error);
