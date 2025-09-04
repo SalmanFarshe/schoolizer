@@ -1,5 +1,6 @@
 <?php
-    // Only admin can access
+  require_once("backend/config/config.php");
+  // Only admin can access
   require('backend/config/auth.php');
   restrict_page(['admin']);
 ?>
@@ -41,29 +42,47 @@
         </div>
       </div>
 
+      <?php
+        // Fetch all classes
+        $sql = "SELECT class_id, class_name, section FROM classes ORDER BY class_name ASC";
+        $result = $conn->query($sql);
+      ?>
+      <!-- Quick Links -->
+      <div class="mb-4">
+        <h5>Class Quick Links</h5>
+        <div class="d-flex gap-2 flex-wrap justify-content-between">
+          <?php while ($row = $result->fetch_assoc()): ?>
+            <a href="class-students.php?class_id=<?= urlencode($row['class_id']) ?>" 
+              class="btn button">
+              <i class="bi bi-people-fill me-1"></i> 
+              <?= htmlspecialchars($row['class_name']) ?> 
+              <?= $row['section'] ? '(' . htmlspecialchars($row['section']) . ')' : '' ?>
+            </a>
+          <?php endwhile; ?>
+        </div>
+      </div>
+
       <div class="table-responsive">
         <table class="table table-striped table-hover table-bordered align-middle text-center" id="resultsTable">
           <thead class="table-dark">
             <tr>
-              <th>Result ID</th>
+              <th>Student ID</th>
               <th>Student Name</th>
               <th>Class</th>
               <th>Roll</th>
-              <th>Subject</th>
-              <th>Marks</th>
               <th>Grade</th>
+              <th>CGPA</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>RES001</td>
+              <td>STU001</td>
               <td>John Doe</td>
               <td>10</td>
               <td>01</td>
-              <td>Math</td>
-              <td>95</td>
               <td>A+</td>
+              <td>4.36</td>
               <td class="d-flex justify-content-center gap-1">
                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#viewResultModal"
                   data-id="RES001" data-name="John Doe" data-class="10" data-roll="01" data-subject="Math"
@@ -75,6 +94,12 @@
 
                 <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteResultModal"
                   data-id="RES001" data-name="John Doe" title="Delete"><i class="bi bi-trash"></i></button>
+
+                  <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#printResultModal"
+                  data-id="RES001" data-name="John Doe" title="Print">
+                  <i class="bi bi-printer"></i>
+                </button>
+
               </td>
             </tr>
             <!-- Add more rows dynamically from DB -->

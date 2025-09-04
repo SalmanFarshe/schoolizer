@@ -1,5 +1,6 @@
 <?php
     // Only admin can access
+  require('backend/config/config.php');
   require('backend/config/auth.php');
   restrict_page(['admin']);
 ?>
@@ -37,36 +38,41 @@
           </thead>
           <tbody>
             <!-- Example Row -->
-            <tr>
-              <td>SUB001</td>
-              <td>Mathematics</td>
-              <td>10</td>
-              <td class="d-flex justify-content-center gap-1">
-                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editSubjectModal"
-                  data-id="SUB001" data-name="Mathematics" data-class="10" title="Edit">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteSubjectModal"
-                  data-id="SUB001" data-name="Mathematics" title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>SUB002</td>
-              <td>English</td>
-              <td>9</td>
-              <td class="d-flex justify-content-center gap-1">
-                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editSubjectModal"
-                  data-id="SUB002" data-name="English" data-class="9" title="Edit">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteSubjectModal"
-                  data-id="SUB002" data-name="English" title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
+             <?php
+              $subjects_res = $conn->query("SELECT s.id, s.subject_name, c.class_name, c.section FROM subjects s JOIN classes c ON s.class_id = c.id ORDER BY c.class_name, c.section, s.subject_name");
+              while($subject = $subjects_res->fetch_assoc()){
+                  $subject_id = htmlspecialchars($subject['id']);
+                  $subject_name = htmlspecialchars($subject['subject_name']);
+                  $class_name = htmlspecialchars($subject['class_name']);
+                  $section = htmlspecialchars($subject['section']);
+                  ?>
+                  <tr>
+                    <td><?php echo $subject_id; ?></td>
+                    <td><?php echo $subject_name; ?></td>
+                    <td><?php echo $class_name; ?></td>
+                    <td class="d-flex justify-content-center gap-1">
+                      <button class="btn btn-warning btn-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#editSubjectModal"
+                            data-id="<?= $subject['id'] ?>"
+                            data-name="<?= htmlspecialchars($subject['subject_name']) ?>"
+                            data-class="<?= $subject['class_id'] ?>">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+
+
+                      <button class="btn btn-danger btn-sm delete-subject-btn" 
+                              data-id="<?= $subject['id'] ?>" 
+                              data-name="<?= htmlspecialchars($subject['subject_name']) ?>" 
+                              data-bs-toggle="modal" 
+                              data-bs-target="#deleteSubjectModal">
+                          <i class="bi bi-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <?php
+              }
+             ?>
           </tbody>
         </table>
       </div>
@@ -82,7 +88,7 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form id="addSubjectForm" method="POST" action="add-subject-process.php">
+          <form id="addSubjectForm" method="POST" action="processes/add-subject-process.php">
             <div class="mb-3">
               <label class="form-label">Subject Name</label>
               <input type="text" class="form-control" name="subject_name" required>
@@ -90,11 +96,18 @@
             <div class="mb-3">
               <label class="form-label">Class</label>
               <select class="form-select" name="subject_class" required>
-                <option value="">Select Class</option>
-                <option value="10">10</option>
-                <option value="9">9</option>
-                <option value="8">8</option>
-                <!-- More classes -->
+                <option value="" disabled selected>Select Class</option>
+                <?php
+                  // Fetch classes dynamically
+                  $classes_res = $conn->query("SELECT id, class_name, section FROM classes ORDER BY class_name, section");
+                  while($class = $classes_res->fetch_assoc()){
+                      $class_display = htmlspecialchars($class['class_name']);
+                      if(!empty($class['section'])){
+                          $class_display .= " - " . htmlspecialchars($class['section']);
+                      }
+                      echo "<option value='".intval($class['id'])."'>$class_display</option>";
+                  }
+                ?>
               </select>
             </div>
             <div class="text-end">
@@ -107,39 +120,53 @@
     </div>
   </div>
 
-  <!-- Edit Subject Modal -->
-  <div class="modal fade zoom-in" id="editSubjectModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header bg-dark text-dark">
-          <h5 class="modal-title">Edit Subject</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="editSubjectForm" method="POST" action="edit-subject-process.php">
-            <input type="hidden" name="subject_id" id="editSubId">
-            <div class="mb-3">
-              <label class="form-label">Subject Name</label>
-              <input type="text" class="form-control" name="subject_name" id="editSubName">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Class</label>
-              <select class="form-select" name="subject_class" id="editSubClass">
-                <option value="">Select Class</option>
-                <option value="10">10</option>
-                <option value="9">9</option>
-                <option value="8">8</option>
-              </select>
-            </div>
-            <div class="text-end">
-              <button type="submit" class="btn btn-success">Save Changes</button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
-          </form>
-        </div>
+
+<!-- Edit Subject Modal -->
+<div class="modal fade zoom-in" id="editSubjectModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title">Edit Subject</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editSubjectForm" method="POST" action="processes/edit-subject-process.php">
+          <input type="hidden" name="subject_id" id="editSubId">
+
+          <div class="mb-3">
+            <label class="form-label">Subject Name</label>
+            <input type="text" class="form-control" name="subject_name" id="editSubName" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Class</label>
+            <select class="form-select" name="subject_class" id="editSubClass" required>
+              <option value="" disabled>Select Class</option>
+              <?php
+                $classes_res = $conn->query("SELECT id, class_name, section FROM classes ORDER BY class_name, section");
+                while($class = $classes_res->fetch_assoc()){
+                    $class_display = htmlspecialchars($class['class_name']);
+                    if(!empty($class['section'])){
+                        $class_display .= " - " . htmlspecialchars($class['section']);
+                    }
+                    // Pre-select the assigned class
+                    $selected = (isset($current_class_id) && $class['id'] == $current_class_id) ? "selected" : "";
+                    echo "<option value='".intval($class['id'])."' $selected>$class_display</option>";
+                }
+              ?>
+            </select>
+          </div>
+
+          <div class="text-end">
+            <button type="submit" class="btn btn-success">Save Changes</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
+</div>
+
 
   <!-- Delete Subject Modal -->
   <div class="modal fade zoom-in" id="deleteSubjectModal" tabindex="-1">
@@ -153,12 +180,16 @@
           <p>Are you sure you want to delete <b id="deleteSubName"></b>?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-danger" id="confirmDeleteSubject">Yes, Delete</button>
+          <form action="processes/delete-subject-process.php" method="POST">
+            <input type="hidden" name="subject_id" id="deleteSubId">
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+          </form>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>
   </div>
+
 
   <script src="assets/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -172,11 +203,15 @@
     });
 
     // Delete Subject Modal
-    var deleteModal = document.getElementById('deleteSubjectModal');
-    deleteModal.addEventListener('show.bs.modal', function(event){
+      var deleteSubjectModal = document.getElementById('deleteSubjectModal');
+      deleteSubjectModal.addEventListener('show.bs.modal', function(event){
       var button = event.relatedTarget;
-      document.getElementById('deleteSubName').innerText = button.dataset.name;
-    });
+      var subjectName = button.getAttribute('data-name');
+      var subjectId   = button.getAttribute('data-id');
+
+      document.getElementById('deleteSubName').textContent = subjectName;
+      document.getElementById('deleteSubId').value = subjectId;
+  });
   </script>
 </body>
 </html>

@@ -4,12 +4,23 @@
   require('backend/config/auth.php');
   restrict_page(['admin']);
   $active_page = 'id-cards.php';
+  
   include("backend/path.php");
   // Fetch all students with class info
-  $sql = "SELECT s.*, c.class_name FROM students s 
-          LEFT JOIN classes c ON s.class_id = c.id 
-          ORDER BY s.name ASC";
-  $result = mysqli_query($conn, $sql);
+
+    $class_code = $_GET['class_id'] ?? '';
+
+    $sql = "SELECT s.*, c.class_name, c.class_id AS class_code
+            FROM students s
+            LEFT JOIN classes c ON s.class_id = c.id
+            WHERE c.class_id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $class_code);
+    $stmt->execute();
+    $result = $stmt->get_result();
+?>
+
 
 ?>
 <!DOCTYPE html>
@@ -36,71 +47,80 @@
       $sqls = "SELECT class_id, class_name, section FROM classes ORDER BY class_name ASC";
       $results = $conn->query($sqls);
     ?>
+    
     <!-- Quick Links -->
+    <?php
+    // Fetch all classes
+    $sqls = "SELECT class_id, class_name, section FROM classes ORDER BY class_name ASC";
+    $results = $conn->query($sqls);
+    ?>
     <div class="mb-4">
-      <h5>Class Quick Links</h5>
-      <div class="d-flex gap-2 flex-wrap justify-content-between">
+    <h5>Class Quick Links</h5>
+    <div class="d-flex gap-2 flex-wrap justify-content-start">
         <?php while ($rows = $results->fetch_assoc()): ?>
-          <a href="class-ids.php?class_id=<?= urlencode($rows['class_id']) ?>" 
+        <a href="class-ids.php?class_id=<?= urlencode($rows['class_id']) ?>" 
             class="btn btn-outline-success">
-            <i class="bi bi-people-fill me-1"></i> 
+            <i class="bi bi-people-fill me-1"></i>
             <?= htmlspecialchars($rows['class_name']) ?> 
             <?= $rows['section'] ? '(' . htmlspecialchars($rows['section']) . ')' : '' ?>
-          </a>
+        </a>
         <?php endwhile; ?>
-      </div>
     </div>
+    </div>
+
   
-  <div class="table-responsive">
-    <table class="table table-striped table-hover table-bordered text-center align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th>Name</th>
-          <th>Role</th>
-          <th>Class</th>
-          <th>ID Number</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php if(mysqli_num_rows($result) > 0): ?>
-          <?php while($row = mysqli_fetch_assoc($result)): ?>
-            <tr>
-              <td><?= htmlspecialchars($row['name']) ?></td>
-              <td>Student</td>
-              <td><?= htmlspecialchars($row['class_name'] ?? '-') ?></td>
-              <td><?= htmlspecialchars($row['student_id']) ?></td>
-              <td class="d-flex justify-content-center gap-1">
-                <button class="btn btn-primary btn-sm viewStudentBtn" 
-                        data-bs-toggle="modal" data-bs-target="#viewIDModal"
-                        data-name="<?= htmlspecialchars($row['name']) ?>"
-                        data-roll="<?= htmlspecialchars($row['roll']) ?>"
-                        data-class="<?= htmlspecialchars($row['class_name'] ?? '-') ?>"
-                        data-id="<?= htmlspecialchars($row['student_id']) ?>"
-                        data-dob="<?= htmlspecialchars($row['dob'] ?? '-') ?>"
-                        data-blood="<?= htmlspecialchars($row['blood'] ?? '-') ?>"
-                        data-photo="<?= htmlspecialchars($row['profile_pic'] ?? 'assets/images/default-avatar.png') ?>"
-                        title="View/Print">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-danger btn-sm deleteStudentBtn" 
-                        data-bs-toggle="modal" data-bs-target="#deleteIDModal"
-                        data-name="<?= htmlspecialchars($row['name']) ?>"
-                        data-id="<?= htmlspecialchars($row['student_id']) ?>"
-                        title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
-          <?php endwhile; ?>
-        <?php else: ?>
-          <tr>
-            <td colspan="5">No students found.</td>
-          </tr>
-        <?php endif; ?>
-      </tbody>
-    </table>
-  </div>
+<div class="table-responsive">
+  <table class="table table-striped table-hover table-bordered text-center align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Class</th>
+        <th>ID Number</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php if(mysqli_num_rows($result) > 0): ?>
+  <?php while($row = mysqli_fetch_assoc($result)): ?>
+    <tr>
+      <td><?= htmlspecialchars($row['name']) ?></td>
+      <td>Student</td>
+      <td><?= htmlspecialchars($row['class_name'] ?? '-') ?></td>
+      <td><?= htmlspecialchars($row['student_id']) ?></td>
+      <td class="d-flex justify-content-center gap-1">
+        <button class="btn btn-primary btn-sm viewStudentBtn" 
+                data-bs-toggle="modal" data-bs-target="#viewIDModal"
+                data-name="<?= htmlspecialchars($row['name']) ?>"
+                data-roll="<?= htmlspecialchars($row['roll']) ?>"
+                data-class="<?= htmlspecialchars($row['class_name'] ?? '-') ?>"
+                data-id="<?= htmlspecialchars($row['student_id']) ?>"
+                data-dob="<?= htmlspecialchars($row['dob'] ?? '-') ?>"
+                data-blood="<?= htmlspecialchars($row['blood'] ?? '-') ?>"
+                data-photo="<?= htmlspecialchars($row['profile_pic'] ?? 'assets/images/default-avatar.png') ?>"
+                title="View/Print">
+          <i class="bi bi-eye"></i>
+        </button>
+        <button class="btn btn-danger btn-sm deleteStudentBtn" 
+                data-bs-toggle="modal" data-bs-target="#deleteIDModal"
+                data-name="<?= htmlspecialchars($row['name']) ?>"
+                data-id="<?= htmlspecialchars($row['student_id']) ?>"
+                title="Delete">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>
+  <?php endwhile; ?>
+<?php else: ?>
+  <tr>
+    <td colspan="5">No students found.</td>
+  </tr>
+<?php endif; ?>
+
+    </tbody>
+  </table>
+</div>
+
 
 </div>
 </div>

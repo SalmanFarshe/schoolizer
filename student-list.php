@@ -38,61 +38,65 @@
               <th>Roll</th>
               <th>Name</th>
               <th>Class</th>
-              <th>Father's Name</th>
-              <th>Mother's Name</th>
               <th>CGPA</th>
-              <th>Email</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-          <?php
-            $result = $conn->query("SELECT * FROM students ORDER BY id DESC");
-            while($row = $result->fetch_assoc()){
-               ?>
-               <tr>
-                    <td><?php echo $row['student_id']; ?></td>
-                    <td><?php echo $row['roll']; ?></td>
-                    <td><?php echo $row['name']; ?></td>
-                    <td><?php echo $row['class']; ?></td>
-                    <td><?php echo $row['father_name']; ?></td>
-                    <td><?php echo $row['mother_name']; ?></td>
-                    <td><?php echo $row['cgpa']; ?></td>
-                    <td><?php echo $row['email']; ?></td>
-                    <td class='d-flex justify-content-center gap-1'>
-                        <!-- View -->
-                        <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#viewStudentModal'
-                            data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>'
-                            data-roll='<?php echo $row['roll']; ?>' data-class='<?php echo $row['class']; ?>'
-                            data-father='<?php echo $row['father_name']; ?>' data-mother='<?php echo $row['mother_name']; ?>'
-                            data-cgpa='<?php echo $row['cgpa']; ?>' data-email='<?php echo $row['email']; ?>' title='View'>
-                            <i class='bi bi-eye'></i>
-                        </button>
+            <?php
+              // Fetch students along with their class info
+              $sql = "
+                  SELECT s.*, c.class_name, c.section 
+                  FROM students s
+                  LEFT JOIN classes c ON s.class_id = c.id
+                  ORDER BY s.name
+              ";
+              $result = $conn->query($sql);
 
-                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal"
-                            data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>'
-                            data-roll='<?php echo $row['roll']; ?>' data-class='<?php echo $row['class']; ?>'
-                            data-father='<?php echo $row['father_name']; ?>' data-mother='<?php echo $row['mother_name']; ?>'
-                            data-cgpa='<?php echo $row['cgpa']; ?>' data-email='<?php echo $row['email']; ?>' title="Edit">
-                            <i class="bi bi-pencil-square"></i>
-                        </button>
-
-
-                        <!-- Delete -->
-                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteStudentModal"
-                            data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>' title="Delete">
-                            <i class="bi bi-trash"></i>
-                        </button>
-
-                       <!-- Download PDF Button -->
-                      <button class="btn btn-success btn-sm"
-                          onclick="window.location.href='processes/download-student.php?student_id=<?php echo $row['student_id']; ?>'">
-                          <i class="bi bi-download"></i>
+              while($row = $result->fetch_assoc()){
+                  $class_display = htmlspecialchars($row['class_name']);
+                  if(!empty($row['section'])){
+                      $class_display .= " - " . htmlspecialchars($row['section']);
+                  }
+                  ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($row['student_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['roll']); ?></td>
+                        <td><?php echo htmlspecialchars($row['name']); ?></td>
+                        <td><?php echo $class_display; ?></td>
+                        <td><?php echo htmlspecialchars($row['cgpa']); ?></td>
+                      <!-- View -->
+                       <td>
+                      <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#viewStudentModal'
+                          data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>'
+                          data-roll='<?php echo $row['roll']; ?>' data-class='<?php echo $row['class']; ?>'
+                          data-father='<?php echo $row['father_name']; ?>' data-mother='<?php echo $row['mother_name']; ?>'
+                          data-cgpa='<?php echo $row['cgpa']; ?>' data-email='<?php echo $row['email']; ?>' title='View'>
+                          <i class='bi bi-eye'></i>
                       </button>
 
-                    </td>
-                </tr>
-               
+                      <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal"
+                          data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>'
+                          data-roll='<?php echo $row['roll']; ?>' data-class='<?php echo $row['class']; ?>'
+                          data-father='<?php echo $row['father_name']; ?>' data-mother='<?php echo $row['mother_name']; ?>'
+                          data-cgpa='<?php echo $row['cgpa']; ?>' data-email='<?php echo $row['email']; ?>' title="Edit">
+                          <i class="bi bi-pencil-square"></i>
+                      </button>
+
+                      <!-- Delete -->
+                      <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteStudentModal"
+                          data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>' title="Delete">
+                          <i class="bi bi-trash"></i>
+                      </button>
+
+                      <!-- Download PDF Button -->
+                    <button class="btn btn-success btn-sm"
+                        onclick="window.location.href='processes/download-student.php?student_id=<?php echo $row['student_id']; ?>'">
+                        <i class="bi bi-download"></i>
+                    </button>
+                  </td>
+              </tr>
+              
                <?php
             }
             ?>
@@ -145,10 +149,22 @@
             <label class="form-label">Roll</label>
             <input type="text" class="form-control" id="editStudentRoll" name="roll" required>
           </div>
-          <div class="mb-3">
+         <div class="mb-3">
             <label class="form-label">Class</label>
-            <input type="text" class="form-control" id="editStudentClass" name="class" required>
+           <select class="form-select" name="class_id" id="editStudentClass" required>
+              <option value="">Select Class</option>
+              <?php
+                $classes = $conn->query("SELECT id, class_name, section FROM classes ORDER BY class_name, section");
+                while($c = $classes->fetch_assoc()){
+                    $display = htmlspecialchars($c['class_name']);
+                    if(!empty($c['section'])) $display .= " - " . htmlspecialchars($c['section']);
+                    echo "<option value='{$c['id']}'>{$display}</option>";
+                }
+              ?>
+            </select>
+
           </div>
+
           <div class="mb-3">
             <label class="form-label">Father's Name</label>
             <input type="text" class="form-control" id="editStudentFather" name="father_name">
@@ -220,51 +236,64 @@
 
       <!-- Add Student Modal -->
       <div class="modal fade zoom-in" id="addStudentModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-              <h5 class="modal-title">Add Student</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              <form action="processes/add-student-process.php" method="POST">
-                <div class="mb-3">
-                  <label class="form-label">Name</label>
-                  <input type="text" class="form-control" name="student_name" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Roll</label>
-                  <input type="text" class="form-control" name="roll" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Class</label>
-                  <input type="text" class="form-control" name="class" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Father’s Name</label>
-                  <input type="text" class="form-control" name="father_name">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Mother’s Name</label>
-                  <input type="text" class="form-control" name="mother_name">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">CGPA</label>
-                  <input type="text" class="form-control" name="cgpa">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Email</label>
-                  <input type="email" class="form-control" name="email">
-                </div>
-                <div class="text-end">
-                  <button type="submit" class="btn btn-success">Save</button>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title">Add Student</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
+      <div class="modal-body">
+        <form action="processes/add-student-process.php" method="POST">
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" name="student_name" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Roll</label>
+            <input type="text" class="form-control" name="roll" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Class</label>
+            <select class="form-select" name="class_id" required>
+              <option value="" disabled selected>Select Class</option>
+              <?php
+                $classes_res = $conn->query("SELECT id, class_name, section FROM classes ORDER BY class_name, section");
+                while($class = $classes_res->fetch_assoc()){
+                    $display = htmlspecialchars($class['class_name']);
+                    if(!empty($class['section'])){
+                        $display .= " - " . htmlspecialchars($class['section']);
+                    }
+                    echo "<option value='".intval($class['id'])."'>$display</option>";
+                }
+              ?>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Father’s Name</label>
+            <input type="text" class="form-control" name="father_name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Mother’s Name</label>
+            <input type="text" class="form-control" name="mother_name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">CGPA</label>
+            <input type="text" class="form-control" name="cgpa">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" name="email">
+          </div>
+          <div class="text-end">
+            <button type="submit" class="btn btn-success">Save</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     </div>
   </div>
@@ -297,6 +326,7 @@ editModal.addEventListener('show.bs.modal', function(event){
     document.getElementById('editStudentMother').value = button.dataset.mother || '';
     document.getElementById('editStudentCgpa').value = button.dataset.cgpa || '';
     document.getElementById('editStudentEmail').value = button.dataset.email;
+    document.getElementById('editStudentClass').value = student.class_id;
 });
 
 

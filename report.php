@@ -1,10 +1,44 @@
 <?php
-    // Only admin can access
-  require('backend/config/auth.php');
-  restrict_page(['admin']);
+require('backend/config/config.php');
+require('backend/config/auth.php');
+restrict_page(['admin']);
+$active_page = 'report.php';
+include("backend/path.php");
+
+// KPIs
+$totalStudents = $conn->query("SELECT COUNT(*) as total FROM students")->fetch_assoc()['total'];
+$totalTeachers = $conn->query("SELECT COUNT(*) as total FROM teachers")->fetch_assoc()['total'];
+$avgCGPA = $conn->query("SELECT AVG(cgpa) as avg_cgpa FROM students")->fetch_assoc()['avg_cgpa'];
+$totalClasses = $conn->query("SELECT COUNT(*) as total FROM classes")->fetch_assoc()['total'];
+
+// Charts Data
+$cgpaData = $conn->query("
+  SELECT c.class_name, AVG(s.cgpa) as avg_cgpa
+  FROM students s
+  LEFT JOIN classes c ON s.class_id = c.class_id
+  GROUP BY s.class_id
+");
+$cgpaLabels = [];
+$cgpaValues = [];
+while($c = $cgpaData->fetch_assoc()){
+    $cgpaLabels[] = $c['class_name'];
+    $cgpaValues[] = round($c['avg_cgpa'], 2);
+}
+
+$studentCountData = $conn->query("
+  SELECT c.class_name, COUNT(s.student_id) as student_count
+  FROM students s
+  LEFT JOIN classes c ON s.class_id = c.class_id
+  GROUP BY s.class_id
+");
+$studentCountLabels = [];
+$studentCountValues = [];
+while($s = $studentCountData->fetch_assoc()){
+    $studentCountLabels[] = $s['class_name'];
+    $studentCountValues[] = $s['student_count'];
+}
 ?>
-<?php $active_page = 'report.php'; ?>
-<?php include("backend/path.php"); ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,149 +47,148 @@
 <title>Reports & Analysis | Schoolizer</title>
 <?php require_once("includes/link.php"); ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  .kpi-card {
+    border-radius: 12px;
+    padding: 20px;
+    color: #fff;
+  }
+  .kpi-icon {
+    font-size: 2rem;
+  }
+</style>
 </head>
 <body>
 <?php require_once("includes/sidebar.php"); ?>
 
 <div class="main-content p-4">
-<div class="container">
-  <h1 class="h3 mb-4">Reports & Analysis</h1>
+  <div class="container">
 
-  <!-- Filters -->
-  <div class="row mb-3">
-    <div class="col-md-3 mb-2">
-      <input type="text" class="form-control" id="searchInput" placeholder="Search by Name/ID">
-    </div>
-    <div class="col-md-3 mb-2">
-      <select class="form-select" id="filterClass">
-        <option value="">All Classes</option>
-        <option value="9">Class 9</option>
-        <option value="10">Class 10</option>
-      </select>
-    </div>
-    <div class="col-md-3 mb-2">
-      <select class="form-select" id="filterRole">
-        <option value="">All Roles</option>
-        <option value="Student">Student</option>
-        <option value="Teacher">Teacher</option>
-      </select>
-    </div>
-    <div class="col-md-3 mb-2 text-end">
-      <button class="btn btn-success" onclick="exportReport('pdf')"><i class="bi bi-file-earmark-pdf"></i> Export PDF</button>
-      <button class="btn btn-primary" onclick="exportReport('excel')"><i class="bi bi-file-earmark-spreadsheet"></i> Export Excel</button>
-    </div>
-  </div>
+    <h1 class="h3 mb-4">Reports & Analysis</h1>
 
-  <!-- Report Table -->
-  <div class="table-responsive mb-4">
-    <table class="table table-striped table-hover table-bordered text-center align-middle" id="reportTable">
-      <thead class="table-dark">
-        <tr>
-          <th>Name</th>
-          <th>Role</th>
-          <th>Class</th>
-          <th>ID Number</th>
-          <th>CGPA</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>John Doe</td>
-          <td>Student</td>
-          <td>10</td>
-          <td>STU001</td>
-          <td>3.85</td>
-        </tr>
-        <tr>
-          <td>Jane Smith</td>
-          <td>Student</td>
-          <td>10</td>
-          <td>STU002</td>
-          <td>3.65</td>
-        </tr>
-        <tr>
-          <td>Ali Khan</td>
-          <td>Student</td>
-          <td>9</td>
-          <td>STU003</td>
-          <td>3.90</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Charts / Analysis -->
-  <div class="row">
-    <div class="col-md-6 mb-4">
-      <canvas id="cgpaChart"></canvas>
+    <!-- KPI Cards -->
+    <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="kpi-card bg-primary d-flex justify-content-between align-items-center shadow">
+          <div>
+            <h5>Total Students</h5>
+            <h3><?= $totalStudents ?></h3>
+          </div>
+          <i class="bi bi-people-fill kpi-icon"></i>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="kpi-card bg-danger d-flex justify-content-between align-items-center shadow">
+          <div>
+            <h5>Total Teachers</h5>
+            <h3><?= $totalTeachers ?></h3>
+          </div>
+          <i class="bi bi-person-badge kpi-icon"></i>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="kpi-card bg-success d-flex justify-content-between align-items-center shadow">
+          <div>
+            <h5>Average CGPA</h5>
+            <h3><?= round($avgCGPA,2) ?></h3>
+          </div>
+          <i class="bi bi-bar-chart kpi-icon"></i>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="kpi-card bg-warning d-flex justify-content-between align-items-center shadow">
+          <div>
+            <h5>Total Classes</h5>
+            <h3><?= $totalClasses ?></h3>
+          </div>
+          <i class="bi bi-building kpi-icon"></i>
+        </div>
+      </div>
     </div>
-    <div class="col-md-6 mb-4">
-      <canvas id="classDistributionChart"></canvas>
-    </div>
+<?php
+// Fetch total students per class
+$classStudentsRes = $conn->query("
+    SELECT c.class_name, COUNT(s.student_id) as student_count
+    FROM classes c
+    LEFT JOIN students s ON s.class_id = c.class_id
+    GROUP BY c.class_id
+");
+$classStudents = [];
+while($row = $classStudentsRes->fetch_assoc()){
+    $classStudents[$row['class_name']] = $row['student_count'];
+}
+?>
+<!-- After main KPI Cards -->
+<div class="row mb-4">
+  <div class="col-12">
+    <h4 class="mb-3">Students per Class</h4>
   </div>
+  <?php foreach($classStudents as $className => $count): ?>
+    <div class="col-md-3 mb-3">
+      <div class="kpi-card bg-info d-flex justify-content-between align-items-center shadow">
+        <div>
+          <h6><?= htmlspecialchars($className) ?></h6>
+          <h4><?= $count ?></h4>
+        </div>
+        <i class="bi bi-people-fill kpi-icon"></i>
+      </div>
+    </div>
+  <?php endforeach; ?>
 </div>
+
+    <!-- Charts -->
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            Average CGPA per Class
+          </div>
+          <div class="card-body">
+            <canvas id="cgpaChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="card shadow">
+          <div class="card-header bg-danger text-white">
+            Student Distribution per Class
+          </div>
+          <div class="card-body">
+            <canvas id="classDistributionChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 <script>
-// Search and Filter
-const searchInput = document.getElementById('searchInput');
-const filterClass = document.getElementById('filterClass');
-const filterRole = document.getElementById('filterRole');
-const table = document.getElementById('reportTable').getElementsByTagName('tbody')[0];
-
-function filterTable() {
-  const search = searchInput.value.toLowerCase();
-  const classFilter = filterClass.value;
-  const roleFilter = filterRole.value;
-
-  for (let row of table.rows) {
-    const name = row.cells[0].innerText.toLowerCase();
-    const role = row.cells[1].innerText;
-    const cls = row.cells[2].innerText;
-    row.style.display = (name.includes(search) &&
-                         (classFilter === "" || cls === classFilter) &&
-                         (roleFilter === "" || role === roleFilter)) ? "" : "none";
-  }
-}
-
-searchInput.addEventListener('input', filterTable);
-filterClass.addEventListener('change', filterTable);
-filterRole.addEventListener('change', filterTable);
-
-// Export (dummy)
-function exportReport(type) {
-  alert(`Exporting report as ${type.toUpperCase()} (this is demo functionality)`);
-}
-
-// Charts
 const cgpaChart = new Chart(document.getElementById('cgpaChart'), {
   type: 'bar',
   data: {
-    labels: ['Class 9', 'Class 10'],
+    labels: <?= json_encode($cgpaLabels) ?>,
     datasets: [{
       label: 'Average CGPA',
-      data: [3.90, 3.75],
-      backgroundColor: ['#175B8C','#F24515']
+      data: <?= json_encode($cgpaValues) ?>,
+      backgroundColor: ['#175B8C','#F24515','#28a745','#ffc107','#6f42c1']
     }]
   },
-  options: {
-    responsive: true,
-    plugins: { legend: { display: false } },
-    scales: { y: { beginAtZero: true, max: 4 } }
-  }
+  options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 4 } } }
 });
 
 const classDistributionChart = new Chart(document.getElementById('classDistributionChart'), {
   type: 'pie',
   data: {
-    labels: ['Class 9', 'Class 10'],
+    labels: <?= json_encode($studentCountLabels) ?>,
     datasets: [{
       label: 'Student Count',
-      data: [30, 25],
-      backgroundColor: ['#F24515','#175B8C']
+      data: <?= json_encode($studentCountValues) ?>,
+      backgroundColor: ['#F24515','#175B8C','#28a745','#ffc107','#6f42c1']
     }]
-  }
+  },
+  options: { responsive: true }
 });
 </script>
 </body>

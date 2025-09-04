@@ -5,10 +5,10 @@ require('backend/config/config.php');
 $total_students = $conn->query("SELECT COUNT(*) AS count FROM students")->fetch_assoc()['count'];
 $total_teachers = $conn->query("SELECT COUNT(*) AS count FROM teachers")->fetch_assoc()['count'];
 $total_classes  = $conn->query("SELECT COUNT(*) AS count FROM classes")->fetch_assoc()['count'];
-// $total_subjects = $conn->query("SELECT COUNT(*) AS count FROM subjects")->fetch_assoc()['count'];
+$total_subjects = $conn->query("SELECT COUNT(*) AS count FROM subjects")->fetch_assoc()['count'];
 
 // Get recent students (last 5 by id)
-$recent_students = $conn->query("SELECT student_id, name, class, roll, cgpa FROM students ORDER BY id DESC LIMIT 5");
+$recent_students = $conn->query("SELECT student_id, name, class_id, roll, cgpa FROM students ORDER BY id DESC LIMIT 5");
 ?>
 
 <!-- Quick Stats Cards -->
@@ -63,36 +63,86 @@ $recent_students = $conn->query("SELECT student_id, name, class, roll, cgpa FROM
 </div>
 
 <!-- Recent Activity Table -->
-<div class="card mb-4">
-  <div class="card-header bg-dark text-white">Recent Students</div>
-  <div class="card-body table-responsive">
-    <table class="table table-striped table-bordered align-middle text-center">
-      <thead class="table-dark">
-        <tr>
-          <th>Student ID</th>
-          <th>Name</th>
-          <th>Class</th>
-          <th>Roll</th>
-          <th>CGPA</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php if ($recent_students->num_rows > 0): ?>
-          <?php while($row = $recent_students->fetch_assoc()): ?>
+<div class="row">
+  <div class="col-md-6">
+    <div class="card mb-4">
+      <div class="card-header bg-dark text-white">Recent Students</div>
+      <div class="card-body table-responsive">
+        <table class="table table-striped table-bordered align-middle text-center">
+          <thead class="table-dark">
             <tr>
-              <td><?= htmlspecialchars($row['student_id']) ?></td>
-              <td><?= htmlspecialchars($row['name']) ?></td>
-              <td><?= htmlspecialchars($row['class']) ?></td>
-              <td><?= htmlspecialchars($row['roll']) ?></td>
-              <td><?= htmlspecialchars($row['cgpa']) ?></td>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Class</th>
+              <th>Roll</th>
+              <th>CGPA</th>
             </tr>
-          <?php endwhile; ?>
-        <?php else: ?>
-          <tr>
-            <td colspan="5">No students found</td>
-          </tr>
-        <?php endif; ?>
-      </tbody>
-    </table>
+          </thead>
+          <tbody>
+            <?php if ($recent_students->num_rows > 0): ?>
+              <?php while($row = $recent_students->fetch_assoc()): ?>
+                <tr>
+                  <td><?= htmlspecialchars($row['student_id']) ?></td>
+                  <td><?= htmlspecialchars($row['name']) ?></td>
+                  <td><?= htmlspecialchars($row['class_id']) ?></td>
+                  <td><?= htmlspecialchars($row['roll']) ?></td>
+                  <td><?= htmlspecialchars($row['cgpa']) ?></td>
+                </tr>
+              <?php endwhile; ?>
+            <?php else: ?>c
+              <tr>
+                <td colspan="5">No students found</td>
+              </tr>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+    </div>  
+</div>
+  <div class="col-md-6">
+    <div class="card mb-4">
+      <div class="card-header bg-dark text-white">Recent Notices</div>
+        <div class="card-body table-responsive">
+          <table class="table table-striped table-hover table-bordered text-center align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Example Row -->
+              <tr>
+                <td>Annual Sports Day</td>
+                <td>2025-09-01</td>
+                <td class="d-flex justify-content-center gap-1">
+                  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#viewNoticeModal" title="View">
+                    View
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>Annual Sports Day</td>
+                <td>2025-09-01</td>
+                <td class="d-flex justify-content-center gap-1">
+                  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#viewNoticeModal" title="View">
+                    View
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>Annual Sports Day</td>
+                <td>2025-09-01</td>
+                <td class="d-flex justify-content-center gap-1">
+                  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#viewNoticeModal" title="View">
+                    View
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+    </div>
   </div>
 </div>

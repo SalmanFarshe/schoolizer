@@ -1,8 +1,71 @@
 <?php
-    // Only admin can access
-  require('backend/config/auth.php');
-  restrict_page(['admin']);
+require('backend/config/config.php');
+require('backend/config/auth.php');
+restrict_page(['admin']); // Only admin can manage notices
+
+// -------------------------- HANDLE FORM SUBMISSIONS --------------------------
+
+// Add Notice
+if(isset($_POST['action']) && $_POST['action'] === 'add') {
+    $title       = trim($_POST['title']);
+    $description = trim($_POST['description']);
+    $date        = $_POST['date'];
+    $audience    = $_POST['audience'];
+
+    if($title && $description && $date && $audience){
+        $stmt = $conn->prepare("INSERT INTO notices (title, description, notice_date, audience) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $title, $description, $date, $audience);
+        $stmt->execute();
+        $stmt->close();
+        $_SESSION['success'] = "Notice added successfully!";
+    } else {
+        $_SESSION['error'] = "All fields are required!";
+    }
+    header("Location: notices.php");
+    exit();
+}
+
+// Edit Notice
+if(isset($_POST['action']) && $_POST['action'] === 'edit') {
+    $id          = intval($_POST['notice_id']);
+    $title       = trim($_POST['title']);
+    $description = trim($_POST['description']);
+    $date        = $_POST['date'];
+    $audience    = $_POST['audience'];
+
+    if($id && $title && $description && $date && $audience){
+        $stmt = $conn->prepare("UPDATE notices SET title=?, description=?, notice_date=?, audience=? WHERE id=?");
+        $stmt->bind_param("ssssi", $title, $description, $date, $audience, $id);
+        $stmt->execute();
+        $stmt->close();
+        $_SESSION['success'] = "Notice updated successfully!";
+    } else {
+        $_SESSION['error'] = "All fields are required!";
+    }
+    header("Location: notices.php");
+    exit();
+}
+
+// Delete Notice
+if(isset($_POST['action']) && $_POST['action'] === 'delete') {
+    $id = intval($_POST['notice_id']);
+    if($id){
+        $stmt = $conn->prepare("DELETE FROM notices WHERE id=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $stmt->close();
+        $_SESSION['success'] = "Notice deleted successfully!";
+    } else {
+        $_SESSION['error'] = "Invalid notice ID!";
+    }
+    header("Location: notices.php");
+    exit();
+}
+
+// Fetch all notices
+$notices_res = $conn->query("SELECT * FROM notices ORDER BY notice_date DESC");
 ?>
+
 <?php $active_page = 'notices.php'; ?>
 <?php include("backend/path.php"); ?>
 <!DOCTYPE html>
@@ -25,6 +88,14 @@
     </button>
   </div>
 
+  <!-- Display messages -->
+  <?php if(isset($_SESSION['success'])): ?>
+    <div class="alert alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
+  <?php endif; ?>
+  <?php if(isset($_SESSION['error'])): ?>
+    <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
+  <?php endif; ?>
+
   <div class="table-responsive">
     <table class="table table-striped table-hover table-bordered text-center align-middle">
       <thead class="table-dark">
@@ -36,28 +107,46 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Example Row -->
+        <?php while($row = $notices_res->fetch_assoc()): ?>
         <tr>
-          <td>Annual Sports Day</td>
-          <td>2025-09-01</td>
-          <td>All Students</td>
+          <td><?php echo htmlspecialchars($row['title']); ?></td>
+          <td><?php echo $row['notice_date']; ?></td>
+          <td><?php echo $row['audience']; ?></td>
           <td class="d-flex justify-content-center gap-1">
-            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#viewNoticeModal" title="View">
+            <button class="btn btn-primary btn-sm viewNoticeBtn" 
+              data-id="<?php echo $row['id']; ?>" 
+              data-title="<?php echo htmlspecialchars($row['title']); ?>" 
+              data-desc="<?php echo htmlspecialchars($row['description']); ?>" 
+              data-date="<?php echo $row['notice_date']; ?>" 
+              data-audience="<?php echo $row['audience']; ?>" 
+              data-bs-toggle="modal" data-bs-target="#viewNoticeModal" title="View">
               <i class="bi bi-eye"></i>
             </button>
-            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editNoticeModal" title="Edit">
+            <button class="btn btn-warning btn-sm editNoticeBtn" 
+              data-id="<?php echo $row['id']; ?>" 
+              data-title="<?php echo htmlspecialchars($row['title']); ?>" 
+              data-desc="<?php echo htmlspecialchars($row['description']); ?>" 
+              data-date="<?php echo $row['notice_date']; ?>" 
+              data-audience="<?php echo $row['audience']; ?>" 
+              data-bs-toggle="modal" data-bs-target="#editNoticeModal" title="Edit">
               <i class="bi bi-pencil-square"></i>
             </button>
-            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteNoticeModal" title="Delete">
+            <button class="btn btn-danger btn-sm deleteNoticeBtn" 
+              data-id="<?php echo $row['id']; ?>" 
+              data-title="<?php echo htmlspecialchars($row['title']); ?>" 
+              data-bs-toggle="modal" data-bs-target="#deleteNoticeModal" title="Delete">
               <i class="bi bi-trash"></i>
             </button>
           </td>
         </tr>
+        <?php endwhile; ?>
       </tbody>
     </table>
   </div>
 </div>
 </div>
+
+<!-- ---------------- MODALS ---------------- -->
 
 <!-- Add Notice Modal -->
 <div class="modal fade" id="addNoticeModal" tabindex="-1">
@@ -68,7 +157,8 @@
   <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
 </div>
 <div class="modal-body">
-  <form id="addNoticeForm">
+  <form id="addNoticeForm" method="POST">
+    <input type="hidden" name="action" value="add">
     <div class="mb-3">
       <label class="form-label">Title</label>
       <input type="text" class="form-control" name="title" required>
@@ -109,7 +199,8 @@
   <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 <div class="modal-body">
-  <form id="editNoticeForm">
+  <form id="editNoticeForm" method="POST">
+    <input type="hidden" name="action" value="edit">
     <input type="hidden" name="notice_id">
     <div class="mb-3">
       <label class="form-label">Title</label>
@@ -151,7 +242,7 @@
   <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
 </div>
 <div class="modal-body">
-  <h4 id="noticeTitle">Title</h4>
+  <h4 id="noticeTitle"></h4>
   <p id="noticeDescription"></p>
   <p><b>Date:</b> <span id="noticeDate"></span></p>
   <p><b>Audience:</b> <span id="noticeAudience"></span></p>
@@ -175,8 +266,12 @@
   <p>Are you sure you want to delete <b id="deleteNoticeTitle"></b>?</p>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-danger">Yes, Delete</button>
-  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  <form method="POST">
+    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="notice_id" id="deleteNoticeId">
+    <button class="btn btn-danger">Yes, Delete</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  </form>
 </div>
 </div>
 </div>
@@ -184,7 +279,37 @@
 
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 <script>
-// Fill modals dynamically
+document.addEventListener('DOMContentLoaded', () => {
+    // Fill Edit Modal
+    document.querySelectorAll('.editNoticeBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            document.querySelector('#editNoticeForm [name="notice_id"]').value = id;
+            document.querySelector('#editNoticeForm [name="title"]').value = btn.dataset.title;
+            document.querySelector('#editNoticeForm [name="description"]').value = btn.dataset.desc;
+            document.querySelector('#editNoticeForm [name="date"]').value = btn.dataset.date;
+            document.querySelector('#editNoticeForm [name="audience"]').value = btn.dataset.audience;
+        });
+    });
+
+    // Fill View Modal
+    document.querySelectorAll('.viewNoticeBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('noticeTitle').textContent = btn.dataset.title;
+            document.getElementById('noticeDescription').textContent = btn.dataset.desc;
+            document.getElementById('noticeDate').textContent = btn.dataset.date;
+            document.getElementById('noticeAudience').textContent = btn.dataset.audience;
+        });
+    });
+
+    // Fill Delete Modal
+    document.querySelectorAll('.deleteNoticeBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('deleteNoticeTitle').textContent = btn.dataset.title;
+            document.getElementById('deleteNoticeId').value = btn.dataset.id;
+        });
+    });
+});
 </script>
 </body>
 </html>

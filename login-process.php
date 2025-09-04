@@ -1,39 +1,41 @@
 <?php
 session_start();
-require("backend/config/config.php"); // database connection
+require("backend/config/config.php"); // mysqli $conn
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $role = $_POST['userrole'];
-    $password = $_POST['password'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $role = isset($_POST['userrole']) ? trim($_POST['userrole']) : '';
+    $password = isset($_POST['password']) ? $_POST['password'] : '';
 
-    if (!empty($role) && !empty($password)) {
-        // Prepare query to prevent SQL injection
-        $stmt = $conn->prepare("SELECT * FROM users WHERE role = ? AND password = MD5(?)");
-        $stmt->bind_param("ss", $role, $password);
+    if ($role !== '' && $password !== '') {
+        $pass_md5 = md5($password);
+
+        // If you truly log in by role only, this matches that pattern.
+        // (Better: add username/email input, but keeping your current UX.)
+        $stmt = $conn->prepare("SELECT * FROM users WHERE role = ? AND password = ? LIMIT 1");
+        if (!$stmt) {
+            $_SESSION['error'] = "DB error: " . $conn->error;
+            header("Location: index.php"); exit;
+        }
+        $stmt->bind_param("ss", $role, $pass_md5);
         $stmt->execute();
-        $result = $stmt->get_result();
+        $res = $stmt->get_result();
 
-        if ($result->num_rows === 1) {
-            $user = $result->fetch_assoc();
-            
-            // Set session variables
-            $_SESSION['user_id'] = $user['id'];
+        if ($res && $res->num_rows === 1) {
+            $user = $res->fetch_assoc();
+            // Store both the string user_id (admin/teacher/student) and numeric id if you want
+            $_SESSION['user_id']  = $user['user_id']; // 'admin' | 'teacher' | 'student'
+            $_SESSION['uid']      = $user['id'];      // numeric PK (optional)
             $_SESSION['username'] = $user['username'];
-            $_SESSION['role'] = $user['role'];
+            $_SESSION['role']     = $user['role'];
 
-            // Redirect based on role
-            if ($user['role'] === 'admin' || 'teacher' || 'student') {
-                header("Location: dashboard.php");
-                exit();
-            }
+            header("Location: dashboard.php"); 
+            exit;
         } else {
             $_SESSION['error'] = "Invalid role or password!";
-                header("Location: index.php");
-            exit();
+            header("Location: index.php"); exit;
         }
     } else {
-        $error = "All fields are required!";
+        $_SESSION['error'] = "All fields are required!";
+        header("Location: index.php"); exit;
     }
 }
-?>
