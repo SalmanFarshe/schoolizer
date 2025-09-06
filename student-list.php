@@ -2,7 +2,7 @@
   // Only admin can access
   require('backend/config/auth.php');
   require('backend/config/config.php');
-  restrict_page(['admin']);
+  restrict_page(['admin', 'teacher']);
 ?>
 <?php $active_page = 'student-list.php'; ?>
 <?php include("backend/path.php"); ?>
@@ -23,9 +23,11 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3">Students List</h1>
         <!-- Add Student Button -->
+         <?php if($role === 'admin'): ?>
         <button type="button" class="btn button" data-bs-toggle="modal" data-bs-target="#addStudentModal">
           <i class="bi bi-plus-circle me-1"></i> Add Student
         </button>
+        <?php endif; ?>
       </div>
       <p class="text-muted">Below is the list of all students.</p>
 
@@ -66,15 +68,15 @@
                         <td><?php echo $class_display; ?></td>
                         <td><?php echo htmlspecialchars($row['cgpa']); ?></td>
                       <!-- View -->
-                       <td>
+                      <td>
                       <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#viewStudentModal'
                           data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>'
-                          data-roll='<?php echo $row['roll']; ?>' data-class='<?php echo $row['class']; ?>'
+                          data-roll='<?php echo $row['roll']; ?>' data-class='<?php echo $class_display; ?>'
                           data-father='<?php echo $row['father_name']; ?>' data-mother='<?php echo $row['mother_name']; ?>'
                           data-cgpa='<?php echo $row['cgpa']; ?>' data-email='<?php echo $row['email']; ?>' title='View'>
                           <i class='bi bi-eye'></i>
                       </button>
-
+                      <?php if($role === 'admin'): ?>
                       <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal"
                           data-id='<?php echo $row['student_id']; ?>' data-name='<?php echo $row['name']; ?>'
                           data-roll='<?php echo $row['roll']; ?>' data-class='<?php echo $row['class']; ?>'
@@ -94,10 +96,11 @@
                         onclick="window.location.href='processes/download-student.php?student_id=<?php echo $row['student_id']; ?>'">
                         <i class="bi bi-download"></i>
                     </button>
+                    <?php endif; ?>
                   </td>
               </tr>
               
-               <?php
+            <?php
             }
             ?>
           </tbody>

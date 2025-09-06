@@ -93,30 +93,104 @@
 
         <?php if($role === 'teacher'): ?>
             <li class="nav-item">
-                <a href="teacher-dash.php" class="nav-link <?php if($active_page == 'teacher-dash.php'){ echo 'active'; } ?>">
+                <a href="dashboard.php" class="nav-link <?php if($active_page == 'dashboard.php'){ echo 'active'; } ?>">
                     <i class="bi bi-speedometer2 me-2"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a href="student-list.php" class="nav-link <?php if($active_page == 'teacher-dash.php'){ echo 'active'; } ?>">
-                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                <a href="profile.php" class="nav-link <?php if($active_page == 'profile.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="teachers.php" class="nav-link <?php if($active_page == 'teachers.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> View Teachers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="mark-submission.php" class="nav-link <?php if($active_page == 'mark-submission.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> Mark Submission
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="student-list.php" class="nav-link <?php if($active_page == 'student-list.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> Student List
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="question-submit.php" class="nav-link <?php if($active_page == 'question-submit.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> Question Submit
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="view-routine.php" class="nav-link <?php if($active_page == 'view-routine.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> View Routine
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="attendence.php" class="nav-link <?php if($active_page == 'attendence.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> Attendence
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="view-calander.php" class="nav-link <?php if($active_page == 'view-calander.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> View Calander
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="view-notice.php" class="nav-link <?php if($active_page == 'view-notice.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> View Notice
                 </a>
             </li>
         <?php endif; ?>
 
         <?php if($role === 'student'): ?>
             <!-- Student-only links -->
-            <li class="nav-item"><a href="student_dashboard.php" class="nav-link <?php if($active_page == 'student_dashboard.php'){ echo 'active'; } ?>"><i class="fas fa-tachometer-alt icon"></i> Dashboard</a></li>
-            <li class="nav-item"><a href="student_profile.php" class="nav-link <?php if($active_page == 'student_profile.php'){ echo 'active'; } ?>"><i class="fas fa-user-circle icon"></i> Profile</a></li>
-            <li class="nav-item"><a href="student_result.php" class="nav-link <?php if($active_page == 'student_result.php'){ echo 'active'; } ?>"><i class="fas fa-poll icon"></i> Result</a></li>
-            <li class="nav-item"><a href="student_notices.php" class="nav-link <?php if($active_page == 'student_notices.php'){ echo 'active'; } ?>"><i class="fas fa-bullhorn icon"></i> Notice</a></li>
-            <li class="nav-item"><a href="student_ledger.php" class="nav-link <?php if($active_page == 'student_ledger.php'){ echo 'active'; } ?>"><i class="fas fa-book icon"></i> Ledger</a></li>
-            <li class="nav-item"><a href="student_note.php" class="nav-link <?php if($active_page == 'student_note.php'){ echo 'active'; } ?>"><i class="fas fa-sticky-note icon"></i> Note</a></li>
-            <li class="nav-item"><a href="student_routine.php" class="nav-link <?php if($active_page == 'student_routine.php'){ echo 'active'; } ?>"><i class="fas fa-calendar-alt icon"></i> Routine</a></li>
-            <li class="nav-item"><a href="student_attendance.php" class="nav-link <?php if($active_page == 'student_attendance.php'){ echo 'active'; } ?>"><i class="fas fa-chart-bar icon"></i> Attendance Report</a></li>
-            <li class="nav-item"><a href="student_quiz.php" class="nav-link <?php if($active_page == 'student_quiz.php'){ echo 'active'; } ?>"><i class="fas fa-question-circle icon"></i> Attempt Quiz</a></li>
-            <li class="nav-item"><a href="student_admit_card.php" class="nav-link <?php if($active_page == 'student_admit_card.php'){ echo 'active'; } ?>"><i class="fas fa-id-card icon"></i> Admit Card</a></li>
-            <li class="nav-item"><a href="student_academic_dates.php" class="nav-link <?php if($active_page == 'student_academic_dates.php'){ echo 'active'; } ?>"><i class="fas fa-calendar-check icon"></i> Academic Dates</a></li>
+            <li class="nav-item">
+                <a href="dashboard.php" class="nav-link <?php if($active_page == 'dashboard.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="profile.php" class="nav-link <?php if($active_page == 'profile.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="view-result.php" class="nav-link <?php if($active_page == 'view-result.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> View Result
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="view-notice.php" class="nav-link <?php if($active_page == 'view-notice.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> View Notice
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="teachers.php" class="nav-link <?php if($active_page == 'teachers.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> View Teachers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="view-calander.php" class="nav-link <?php if($active_page == 'view-calander.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> View Calander
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="class-routine.php" class="nav-link <?php if($active_page == 'class-routine.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> Routine
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="attendance-report.php" class="nav-link <?php if($active_page == 'attendance-report.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> Attendance Report
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="admit-card-download.php" class="nav-link <?php if($active_page == 'admit-card-download.php'){ echo 'active'; } ?>">
+                    <i class="bi bi-speedometer2 me-2"></i> Admit Card
+                </a>
+            </li>
         <?php endif; ?>
 
         <!-- Logout (all roles) -->

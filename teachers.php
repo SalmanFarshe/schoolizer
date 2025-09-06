@@ -2,7 +2,7 @@
   // Only admin can access
   require('backend/config/auth.php');
   require('backend/config/config.php');
-  restrict_page(['admin']);
+  restrict_page(['admin', 'teacher', 'student']);
 ?>
 <?php $active_page = 'teachers.php'; ?>
 <?php include("backend/path.php"); ?>
@@ -23,9 +23,12 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3">Teachers List</h1>
         <!-- Add Teacher Button -->
-        <button type="button" class="btn button" data-bs-toggle="modal" data-bs-target="#addTeacherModal">
-          <i class="bi bi-plus-circle me-1"></i> Add Teacher
-        </button>
+         <?php if($role === 'admin'): ?>
+            ?>
+            <button type="button" class="btn button" data-bs-toggle="modal" data-bs-target="#addTeacherModal">
+              <i class="bi bi-plus-circle me-1"></i> Add Teacher
+            </button>
+         <?php endif; ?>
       </div>
       <p class="text-muted">Below is the list of all teachers.</p>
 
@@ -39,7 +42,9 @@
               <th>Department</th>
               <th>Email</th>
               <th>Phone</th>
+              <?php if($role === 'admin'): ?>
               <th>Action</th>
+              <?php endif; ?>
             </tr>
           </thead>
           <tbody>
@@ -53,6 +58,7 @@
                     <td><?php echo $row['department']; ?></td>
                     <td><?php echo $row['email']; ?></td>
                     <td><?php echo $row['phone']; ?></td>
+                    <?php if($role === 'admin'): ?>
                     <td class='d-flex justify-content-center gap-1'>
                         <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#viewTeacherModal'
                             data-id='<?php echo $row['teacher_id']; ?>' data-name='<?php echo $row['name']; ?>' data-department='<?php echo $row['department']; ?>'
@@ -71,8 +77,8 @@
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
+                    <?php endif; ?>
                 </tr>
-               
                <?php
             }
             ?>

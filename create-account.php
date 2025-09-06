@@ -27,7 +27,7 @@
           <img src="assets/images/logo/schoolizer-logo.png" alt="Schoolizer Logo" class="sign-up-logo img-fluid mb-3" style="width: 100px;">
           <p class="text-white">Create your account to get started</p>
         </div>
-        <form action="#" method="POST">
+        <form action="processes/register-process.php" method="POST">
           <div class="row">
             <!-- select role teacher or student  -->
             <div class="col-md-12 mb-3">
