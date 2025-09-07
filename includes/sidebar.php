@@ -127,11 +127,11 @@
                     <i class="bi bi-speedometer2 me-2"></i> View Routine
                 </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a href="attendence.php" class="nav-link <?php if($active_page == 'attendence.php'){ echo 'active'; } ?>">
                     <i class="bi bi-speedometer2 me-2"></i> Attendence
                 </a>
-            </li>
+            </li> -->
             <li class="nav-item">
                 <a href="view-calander.php" class="nav-link <?php if($active_page == 'view-calander.php'){ echo 'active'; } ?>">
                     <i class="bi bi-speedometer2 me-2"></i> View Calander
@@ -181,16 +181,16 @@
                     <i class="bi bi-speedometer2 me-2"></i> Routine
                 </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a href="attendance-report.php" class="nav-link <?php if($active_page == 'attendance-report.php'){ echo 'active'; } ?>">
                     <i class="bi bi-speedometer2 me-2"></i> Attendance Report
                 </a>
-            </li>
-            <li class="nav-item">
+            </li> -->
+            <!-- <li class="nav-item">
                 <a href="admit-card-download.php" class="nav-link <?php if($active_page == 'admit-card-download.php'){ echo 'active'; } ?>">
                     <i class="bi bi-speedometer2 me-2"></i> Admit Card
                 </a>
-            </li>
+            </li> -->
         <?php endif; ?>
 
         <!-- Logout (all roles) -->

@@ -141,5 +141,63 @@ CREATE TABLE IF NOT EXISTS class_routine (
 );";
 executeQuery($conn, $sql_class_routine, "class_routine");
 
+// 11. admit card request
+$sql_admit_card_requests = "
+    CREATE TABLE IF NOT EXISTS admit_card_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id VARCHAR(50) NOT NULL,
+    exam_name VARCHAR(100) NOT NULL,
+    request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('Pending','Approved','Rejected') DEFAULT 'Pending',
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+);";
+executeQuery($conn, $sql_admit_card_requests, "admit_card_requests");
+
+// 12. student attendance
+$sql_student_attendance = "
+    CREATE TABLE IF NOT EXISTS student_attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id VARCHAR(50) NOT NULL,
+    class_id INT NOT NULL,
+    status ENUM('Present','Absent','Late') NOT NULL,
+    date DATE NOT NULL,
+    UNIQUE KEY unique_attendance(student_id, date)
+);";
+executeQuery($conn, $sql_student_attendance, "student_attendance");
+
+// 12. marks
+$sql_marks = "
+    CREATE TABLE IF NOT EXISTS marks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id VARCHAR(50) NOT NULL,
+    class_id INT NOT NULL,
+    subject_id INT NOT NULL,
+    exam_type ENUM('midterm','final','other') NOT NULL,
+    mcs INT DEFAULT 0,
+    cq INT DEFAULT 0,
+    quiz INT DEFAULT 0,
+    attendance INT DEFAULT 0,
+    total_marks INT GENERATED ALWAYS AS (mcs + cq + quiz + attendance) STORED,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+    FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE
+);";
+executeQuery($conn, $sql_marks, "marks");
+
+// 12. exams
+$sql_exams = "
+CREATE TABLE IF NOT EXISTS exams (
+  id INT NOT NULL AUTO_INCREMENT,
+  exam_name VARCHAR(100) NOT NULL,
+  class_id INT NOT NULL,
+  exam_date DATE NOT NULL,
+  duration VARCHAR(50) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
+);";
+executeQuery($conn, $sql_exams, "exams");
+
 mysqli_close($conn);
 ?>

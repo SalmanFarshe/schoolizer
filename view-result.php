@@ -3,11 +3,37 @@ require('backend/config/config.php');
 require('backend/config/auth.php');
 restrict_page(['student']); // only students
 
-$student_id = $_SESSION['user_id']; // assuming logged-in student
-
+$student_id = $_SESSION['user_id']; // logged-in student
 $active_page = 'view-result.php';
+include("backend/path.php");
+
+// Get filters
+$year = isset($_GET['year']) ? intval($_GET['year']) : '';
+$exam = isset($_GET['exam']) ? mysqli_real_escape_string($conn, $_GET['exam']) : '';
+
+// Build SQL query dynamically
+$sql = "SELECT m.exam_type, s.subject_name, m.mcs, m.cq, m.quiz, m.attendance, m.total_marks
+        FROM marks m
+        JOIN subjects s ON s.id = m.subject_id
+        WHERE m.student_id = '$student_id'";
+
+if ($exam !== '') {
+    $sql .= " AND m.exam_type = '$exam'";
+}
+
+// Optionally filter by year (assuming you have a `created_at` column)
+if ($year !== '') {
+    $sql .= " AND YEAR(m.created_at) = $year";
+}
+
+$sql .= " ORDER BY m.created_at DESC";
+
+$result = mysqli_query($conn, $sql);
+if (!$result) {
+    die("SQL Error: " . mysqli_error($conn));
+}
+$results = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
-<?php include("backend/path.php"); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -24,28 +50,34 @@ $active_page = 'view-result.php';
     <div class="container">
       <h1 class="h3 mb-4">My Results</h1>
 
-      <!-- Filter by Year / Exam -->
+      <!-- Filter Form -->
       <div class="card p-3 mb-4">
         <h5>Filter Results</h5>
         <form method="GET" class="row g-3">
           <div class="col-md-4">
             <label class="form-label">Year</label>
             <select name="year" class="form-select">
-              <option value="" selected>All Years</option>
+              <option value="" <?= $year==''?'selected':'' ?>>All Years</option>
               <?php
-                // Example dynamic years
-                $years = [2025, 2024, 2023];
-                foreach($years as $y) echo "<option value='$y'>$y</option>";
+                // Generate dynamic years from marks table
+                $yearsQuery = mysqli_query($conn, "SELECT DISTINCT YEAR(created_at) AS yr FROM marks WHERE student_id='$student_id' ORDER BY yr DESC");
+                while ($y = mysqli_fetch_assoc($yearsQuery)) {
+                    $selected = $year==$y['yr']?'selected':'';
+                    echo "<option value='{$y['yr']}' $selected>{$y['yr']}</option>";
+                }
               ?>
             </select>
           </div>
           <div class="col-md-4">
             <label class="form-label">Exam</label>
             <select name="exam" class="form-select">
-              <option value="" selected>All Exams</option>
+              <option value="" <?= $exam==''?'selected':'' ?>>All Exams</option>
               <?php
-                $exams = ['Midterm', 'Final', 'Quiz 1', 'Quiz 2'];
-                foreach($exams as $e) echo "<option value='$e'>$e</option>";
+                $examTypes = ['midterm','final','other']; // Or fetch dynamically from marks table
+                foreach($examTypes as $e){
+                    $selected = $exam==$e?'selected':'';
+                    echo "<option value='$e' $selected>".ucfirst($e)."</option>";
+                }
               ?>
             </select>
           </div>
@@ -73,31 +105,25 @@ $active_page = 'view-result.php';
               </tr>
             </thead>
             <tbody>
-              <?php
-                // Example data (replace with DB query)
-                $results = [
-                  ['exam'=>'Midterm','subject'=>'Math','mcq'=>15,'cq'=>20,'quiz'=>5,'attendance'=>5],
-                  ['exam'=>'Midterm','subject'=>'English','mcq'=>10,'cq'=>15,'quiz'=>8,'attendance'=>5],
-                  ['exam'=>'Final','subject'=>'Math','mcq'=>18,'cq'=>22,'quiz'=>6,'attendance'=>5],
-                  ['exam'=>'Final','subject'=>'English','mcq'=>12,'cq'=>18,'quiz'=>7,'attendance'=>5],
-                ];
-
-                foreach($results as $res){
-                  $total = $res['mcq']+$res['cq']+$res['quiz']+$res['attendance'];
-                  // Simple grade calculation
+              <?php if(!empty($results)): ?>
+                <?php foreach($results as $res): 
+                  $total = $res['mcs']+$res['cq']+$res['quiz']+$res['attendance'];
                   $grade = $total >= 90 ? 'A+' : ($total >= 80 ? 'A' : ($total >=70 ? 'B' : ($total>=60?'C':'F')));
-                  echo "<tr>";
-                  echo "<td>{$res['exam']}</td>";
-                  echo "<td>{$res['subject']}</td>";
-                  echo "<td>{$res['mcq']}</td>";
-                  echo "<td>{$res['cq']}</td>";
-                  echo "<td>{$res['quiz']}</td>";
-                  echo "<td>{$res['attendance']}</td>";
-                  echo "<td>$total</td>";
-                  echo "<td>$grade</td>";
-                  echo "</tr>";
-                }
-              ?>
+                ?>
+                  <tr>
+                    <td><?= ucfirst($res['exam_type']); ?></td>
+                    <td><?= htmlspecialchars($res['subject_name']); ?></td>
+                    <td><?= $res['mcs']; ?></td>
+                    <td><?= $res['cq']; ?></td>
+                    <td><?= $res['quiz']; ?></td>
+                    <td><?= $res['attendance']; ?></td>
+                    <td><?= $total; ?></td>
+                    <td><?= $grade; ?></td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <tr><td colspan="8">No results found.</td></tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>

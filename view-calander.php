@@ -2,9 +2,44 @@
 require('backend/config/config.php');
 require('backend/config/auth.php');
 restrict_page(['teacher', 'student']); // accessible by both
+$active_page = 'view-calander.php';
+include("backend/path.php");
+
+// Fetch month-wise holidays dynamically from academic_events table
+$holidaysQuery = "
+    SELECT event_name, event_date 
+    FROM academic_events 
+    WHERE event_type = 'Holiday'
+    ORDER BY event_date ASC
+";
+$holidaysResult = mysqli_query($conn, $holidaysQuery);
+
+$academic_holidays = [];
+while($row = mysqli_fetch_assoc($holidaysResult)) {
+    $month = date('F', strtotime($row['event_date']));
+    $academic_holidays[$month][] = [
+        'date' => date('d M', strtotime($row['event_date'])),
+        'name' => $row['event_name']
+    ];
+}
+
+// Fetch upcoming exams and events dynamically
+$eventsQuery = "
+    SELECT event_name, event_date, event_class, event_type 
+    FROM academic_events 
+    WHERE event_type IN ('Exam', 'Activity') AND event_date >= CURDATE()
+    ORDER BY event_date ASC
+";
+$eventsResult = mysqli_query($conn, $eventsQuery);
+$upcoming_events = [];
+while($row = mysqli_fetch_assoc($eventsResult)) {
+    $upcoming_events[] = [
+        'name' => $row['event_name'],
+        'date' => date('d M', strtotime($row['event_date'])),
+        'class' => $row['event_class']
+    ];
+}
 ?>
-<?php $active_page = 'view-calander.php'; ?>
-<?php include("backend/path.php"); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,33 +75,21 @@ restrict_page(['teacher', 'student']); // accessible by both
             </thead>
             <tbody>
               <?php
-                // Example dynamic data from admin (replace with DB fetch)
-                $academic_holidays = [
-                  'January' => [
-                    ['date'=>'01 Jan', 'name'=>'New Year'],
-                    ['date'=>'25 Jan', 'name'=>'National Day'],
-                    ['date'=>'30 Jan', 'name'=>'Teacher\'s Day']
-                  ],
-                  'February' => [
-                    ['date'=>'10 Feb', 'name'=>'Science Day'],
-                    ['date'=>'21 Feb', 'name'=>'Language Day']
-                  ],
-                  'March' => [
-                    ['date'=>'17 Mar', 'name'=>'Annual Sports Day']
-                  ]
-                ];
-
-                foreach($academic_holidays as $month => $holidays) {
-                  echo "<tr>";
-                  echo "<td>$month</td>";
-                  echo "<td>".count($holidays)."</td>";
-                  echo "<td>";
-                  foreach($holidays as $h) {
-                    echo "<span class='holiday'>{$h['date']} - {$h['name']}</span><br>";
+              if(!empty($academic_holidays)){
+                  foreach($academic_holidays as $month => $holidays){
+                      echo "<tr>";
+                      echo "<td>$month</td>";
+                      echo "<td>".count($holidays)."</td>";
+                      echo "<td>";
+                      foreach($holidays as $h){
+                          echo "<span class='holiday'>{$h['date']} - {$h['name']}</span><br>";
+                      }
+                      echo "</td>";
+                      echo "</tr>";
                   }
-                  echo "</td>";
-                  echo "</tr>";
-                }
+              } else {
+                  echo "<tr><td colspan='3'>No holidays found.</td></tr>";
+              }
               ?>
             </tbody>
           </table>
@@ -87,19 +110,17 @@ restrict_page(['teacher', 'student']); // accessible by both
             </thead>
             <tbody>
               <?php
-                $upcoming_events = [
-                  ['name'=>'Midterm Exam', 'date'=>'15 Sep', 'class'=>'10 - A'],
-                  ['name'=>'Quiz 1', 'date'=>'20 Sep', 'class'=>'9 - B'],
-                  ['name'=>'Annual Function', 'date'=>'01 Oct', 'class'=>'All Classes']
-                ];
-
-                foreach($upcoming_events as $event) {
-                  echo "<tr>";
-                  echo "<td>{$event['name']}</td>";
-                  echo "<td>{$event['date']}</td>";
-                  echo "<td>{$event['class']}</td>";
-                  echo "</tr>";
-                }
+              if(!empty($upcoming_events)){
+                  foreach($upcoming_events as $event){
+                      echo "<tr>";
+                      echo "<td>{$event['name']}</td>";
+                      echo "<td>{$event['date']}</td>";
+                      echo "<td>{$event['class']}</td>";
+                      echo "</tr>";
+                  }
+              } else {
+                  echo "<tr><td colspan='3'>No upcoming exams or events.</td></tr>";
+              }
               ?>
             </tbody>
           </table>

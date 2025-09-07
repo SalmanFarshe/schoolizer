@@ -1,3 +1,8 @@
+<?php
+session_start();
+require("backend/config/config.php"); // mysqli $conn
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

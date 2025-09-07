@@ -3,17 +3,26 @@ session_start();
 require("../backend/config/config.php"); // mysqli $conn
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
-    $role     = trim($_POST['role']);
-    $user_id  = trim($_POST['user_id']); // e.g., STU001, TCH001
 
-    if ($username === '' || $password === '' || $role === '' || $user_id === '') {
+    // Get POST values safely
+    $username = trim($_POST['email'] ?? '');       // email as username
+    $password = trim($_POST['password'] ?? '');
+    $confirm  = trim($_POST['confirm_password'] ?? '');
+    $role     = trim($_POST['role'] ?? '');
+    $user_id  = trim($_POST['id_num'] ?? '');     // student/teacher ID
+
+    // Validate fields
+    if ($username === '' || $password === '' || $confirm === '' || $role === '' || $user_id === '') {
         $_SESSION['error'] = "All fields are required!";
         header("Location: ../create-account.php"); exit;
     }
 
-    // Validate role with student/teacher tables
+    if ($password !== $confirm) {
+        $_SESSION['error'] = "Passwords do not match!";
+        header("Location: ../create-account.php"); exit;
+    }
+
+    // Validate role
     $isValid = false;
     if ($role === 'student') {
         $check = $conn->prepare("SELECT id FROM students WHERE student_id = ? LIMIT 1");
@@ -28,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $check->get_result();
         if ($result && $result->num_rows > 0) $isValid = true;
     } elseif ($role === 'admin') {
-        // Admin accounts are only created manually by you
         $_SESSION['error'] = "Admin accounts must be created by system administrator!";
         header("Location: ../create-account.php"); exit;
     }
@@ -48,16 +56,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: ../create-account.php"); exit;
     }
 
-    // Register user
+    // Hash password using md5
     $pass_md5 = md5($password);
+
+    // Insert user
     $stmt = $conn->prepare("INSERT INTO users (user_id, username, password, role) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("ssss", $user_id, $username, $pass_md5, $role);
 
     if ($stmt->execute()) {
         $_SESSION['success'] = "Registration successful! You can now login.";
-        header("Location: index.php"); exit;
+        header("Location: ../index.php"); exit;
     } else {
-        $_SESSION['error'] = "Database error: " . $conn->error;
+        $_SESSION['error'] = "Database error: " . $stmt->error;
         header("Location: ../create-account.php"); exit;
     }
+
+} else {
+    $_SESSION['error'] = "Invalid request method!";
+    header("Location: ../create-account.php"); exit;
 }
+?>

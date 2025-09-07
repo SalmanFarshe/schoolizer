@@ -2,9 +2,52 @@
 require('backend/config/config.php');
 require('backend/config/auth.php');
 restrict_page(['student']); // only students
+
+$student_id = $_SESSION['user_id']; // logged-in student
+$active_page = 'attendance-report.php';
+include("backend/path.php");
+
+// Fetch subjects and attendance for this student
+$subjectsQuery = "
+    SELECT sub.id AS subject_id, sub.subject_name, c.class_name
+    FROM students s
+    LEFT JOIN classes c ON s.class_id = c.id
+    LEFT JOIN subjects sub ON sub.class_id = c.id
+    WHERE s.student_id = '$student_id'";
+$subjectsResult = mysqli_query($conn, $subjectsQuery);
+$attendanceData = [];
+
+$totalClasses = 0;
+$totalPresent = 0;
+
+while ($sub = mysqli_fetch_assoc($subjectsResult)) {
+    $subject_id = $sub['subject_id'];
+    
+    // Get attendance counts
+    $attQuery = "SELECT 
+                    COUNT(*) AS total_classes,
+                    SUM(status='Present') AS present_count,
+                    SUM(status='Absent') AS absent_count
+                 FROM student_attendance
+                 WHERE student_id='$student_id' AND class_id=(SELECT class_id FROM subjects WHERE id='$subject_id')";
+    $attResult = mysqli_query($conn, $attQuery);
+    $att = mysqli_fetch_assoc($attResult);
+
+    $attendanceData[] = [
+        'subject' => $sub['subject_name'],
+        'total' => (int)$att['total_classes'],
+        'present' => (int)$att['present_count'],
+        'absent' => (int)$att['absent_count']
+    ];
+
+    $totalClasses += (int)$att['total_classes'];
+    $totalPresent += (int)$att['present_count'];
+}
+
+$totalAbsent = $totalClasses - $totalPresent;
+$overallPercent = $totalClasses > 0 ? round(($totalPresent / $totalClasses) * 100) : 0;
+$absentPercent = 100 - $overallPercent;
 ?>
-<?php $active_page = 'attendance-report.php'; ?>
-<?php include("backend/path.php"); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,47 +72,24 @@ restrict_page(['student']); // only students
     <div class="container">
       <h1 class="h3 mb-4">Attendance Report</h1>
 
-      <!-- Filter Form -->
-      <div class="mb-4">
-        <form class="row g-2">
-          <div class="col-md-4">
-            <select class="form-select">
-              <option selected>Select Class</option>
-              <option value="10A">10 - A</option>
-              <option value="9B">9 - B</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <select class="form-select">
-              <option selected>Select Month</option>
-              <option value="sep">September</option>
-              <option value="oct">October</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <button type="submit" class="btn btn-primary w-100">Filter</button>
-          </div>
-        </form>
-      </div>
-
       <!-- Summary Cards -->
       <div class="row mb-4">
         <div class="col-md-4 mb-3">
           <div class="summary-card bg-success">
-            <h3>85%</h3>
+            <h3><?= $overallPercent ?>%</h3>
             <p>Overall Attendance</p>
           </div>
         </div>
         <div class="col-md-4 mb-3">
           <div class="summary-card bg-primary">
-            <h3>90%</h3>
-            <p>Present Classes</p>
+            <h3><?= $totalPresent ?></h3>
+            <p>Classes Present</p>
           </div>
         </div>
         <div class="col-md-4 mb-3">
           <div class="summary-card bg-danger">
-            <h3>10%</h3>
-            <p>Absent Classes</p>
+            <h3><?= $totalAbsent ?></h3>
+            <p>Classes Absent</p>
           </div>
         </div>
       </div>
@@ -89,38 +109,23 @@ restrict_page(['student']); // only students
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Math</td>
-                <td>20</td>
-                <td class="status-present">18</td>
-                <td class="status-absent">2</td>
-                <td class="status-present">90%</td>
-                <td class="status-absent">10%</td>
-              </tr>
-              <tr>
-                <td>English</td>
-                <td>18</td>
-                <td class="status-present">15</td>
-                <td class="status-absent">3</td>
-                <td class="status-present">83%</td>
-                <td class="status-absent">17%</td>
-              </tr>
-              <tr>
-                <td>Physics</td>
-                <td>15</td>
-                <td class="status-present">12</td>
-                <td class="status-absent">3</td>
-                <td class="status-present">80%</td>
-                <td class="status-absent">20%</td>
-              </tr>
-              <tr>
-                <td>Chemistry</td>
-                <td>16</td>
-                <td class="status-present">14</td>
-                <td class="status-absent">2</td>
-                <td class="status-present">87%</td>
-                <td class="status-absent">13%</td>
-              </tr>
+              <?php if(!empty($attendanceData)): ?>
+                <?php foreach($attendanceData as $att): 
+                  $percentPresent = $att['total']>0 ? round(($att['present']/$att['total'])*100) : 0;
+                  $percentAbsent = 100 - $percentPresent;
+                ?>
+                  <tr>
+                    <td><?= htmlspecialchars($att['subject']) ?></td>
+                    <td><?= $att['total'] ?></td>
+                    <td class="status-present"><?= $att['present'] ?></td>
+                    <td class="status-absent"><?= $att['absent'] ?></td>
+                    <td class="status-present"><?= $percentPresent ?>%</td>
+                    <td class="status-absent"><?= $percentAbsent ?>%</td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <tr><td colspan="6">No attendance data available.</td></tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
